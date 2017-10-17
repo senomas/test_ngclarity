@@ -1,5 +1,15 @@
 # BTNHACK
 
+## TOOLS
+
+[httpie](https://httpie.org/)
+
+## TEST
+
+http post "localhost:3000/users?limit=10" lastName=Kuvalis
+
+http "localhost:3000/users?limit=10&skip=900"
+
 ## DOCKER
 
 ``` bash
@@ -19,3 +29,4 @@ use btnhack
 db.createUser({ user: 'btnhack', pwd: 'dodol123', roles: [ { role: "readWrite", db: "btnhack" } ] });
 db.createCollection('users');
 ```
+

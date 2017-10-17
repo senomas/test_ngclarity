@@ -61,7 +61,7 @@ class App {
     });
 
     router.post("/user", (req, res, next) => {
-      console.log("REQ", JSON.stringify(req.body));
+      console.log("Post user ", JSON.stringify(req.body));
       new this.models.user(req.body)
         .save()
         .then(v => {
@@ -70,21 +70,29 @@ class App {
         })
         .catch(err => {
           console.log("ERROR", err);
-          res.sendStatus(500);
+          res.status(500).send(err);
         });
     });
 
-    router.get("/users", (req, res, next) => {
+    let userFind = (req, res, next) => {
+      console.log("Find users", JSON.stringify(req.body));
       this.models.user
-        .find({})
+        .find(req.body)
         .limit(+req.query.limit || 10)
         .skip(+req.query.skip || 0)
-        .sort("email")
         .exec((err, results) => {
-          console.log("GET", err, results);
+          if (err) {
+            res.status(500).send(err);
+            return;
+          }
           res.json(results);
         });
-    });
+    };
+
+    router
+      .route("/users")
+      .get(userFind)
+      .post(userFind);
 
     this.express.use("/", router);
   }
