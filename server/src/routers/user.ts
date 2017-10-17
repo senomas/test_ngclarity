@@ -13,7 +13,6 @@ export class UserRouter {
     new this.models.user(req.body)
       .save()
       .then(v => {
-        console.log("DODOL", v);
         res.json(v);
       })
       .catch(err => {
@@ -39,7 +38,7 @@ export class UserRouter {
   };
 
   find = (req, res, next): void => {
-    this.models.user
+    this.models["user"]
       .find(req.body)
       .limit(+req.query.limit || 10)
       .skip(+req.query.skip || 0)

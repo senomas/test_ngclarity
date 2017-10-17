@@ -62,12 +62,13 @@ class App {
       });
     });
 
-    router.get("/user/:id", routers.user.findById);
-    router.post("/user", routers.user.create);
-    router
-      .route("/users")
-      .get(routers.user.find)
-      .post(routers.user.find);
+    // router.get("/user/:id", routers.user.findById);
+    // router.post("/user", routers.user.create);
+    // router.post("/user/find", routers.user.find);
+
+    router.get("/:model/:id", routers.generic.findById);
+    router.post("/:model", routers.generic.create);
+    router.post("/:model/find", routers.generic.find);
 
     this.express.use("/", router);
   }
