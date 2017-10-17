@@ -7,7 +7,7 @@ const tsProject = ts.createProject("tsconfig.json");
 
 var node;
 
-gulp.task("server", function() {
+gulp.task("server", () => {
   if (node) {
     node.kill();
   }
@@ -19,7 +19,7 @@ gulp.task("server", function() {
   });
 });
 
-gulp.task("default", function() {
+gulp.task("default", () => {
   runSequence(["scripts", "assets"], "server");
 
   gulp.watch(
@@ -30,11 +30,11 @@ gulp.task("default", function() {
   );
 });
 
-gulp.task("build", function() {
+gulp.task("build", () => {
   runSequence("clean", ["scripts", "assets"]);
 });
 
-gulp.task("clean", function() {
+gulp.task("clean", () => {
   return del("dist/**", { force: true });
 });
 
@@ -43,11 +43,11 @@ gulp.task("scripts", () => {
   return tsResult.js.pipe(gulp.dest("dist"));
 });
 
-gulp.task("assets", function() {
+gulp.task("assets", () => {
   return gulp.src(["src/*.json", "src/**/*.json"]).pipe(gulp.dest("dist"));
 });
 
 // clean up if an error goes unhandled.
-process.on("exit", function() {
+process.on("exit", () => {
   if (node) node.kill();
 });

@@ -9,26 +9,20 @@ import mongoose = require("mongoose");
 
 import { Models } from "./models/models";
 
+import { Routers } from "./routers/routers";
+
 class App {
   public express: express.Application;
   private models: Models;
 
   constructor() {
-    this.express = express();
-    this.middleware();
-    this.routes();
-
-    this.express.use(errorHandler());
-
     mongoose.Promise = global.Promise;
-
-    let conn: mongoose.Connection = mongoose.createConnection(
-      "mongodb://localhost:27017/btnhack",
-      { user: "btnhack", pass: "dodol123" }
+    this.models = new Models(
+      mongoose.createConnection("mongodb://localhost:27017/btnhack", {
+        user: "btnhack",
+        pass: "dodol123"
+      })
     );
-
-    this.models = new Models(conn);
-
     this.models.user.count({}, (err, count) => {
       if (count == 0) {
         let objs: any[] = [];
@@ -44,6 +38,12 @@ class App {
         });
       }
     });
+
+    this.express = express();
+    this.express.use(errorHandler());
+
+    this.middleware();
+    this.routes();
   }
 
   private middleware(): void {
@@ -54,45 +54,20 @@ class App {
 
   private routes(): void {
     let router = express.Router();
+    let routers = new Routers(this.models);
+
     router.get("/", (req, res, next) => {
       res.json({
         message: "Hello World!"
       });
     });
 
-    router.post("/user", (req, res, next) => {
-      console.log("Post user ", JSON.stringify(req.body));
-      new this.models.user(req.body)
-        .save()
-        .then(v => {
-          console.log("DODOL", v);
-          res.json(v);
-        })
-        .catch(err => {
-          console.log("ERROR", err);
-          res.status(500).send(err);
-        });
-    });
-
-    let userFind = (req, res, next) => {
-      console.log("Find users", JSON.stringify(req.body));
-      this.models.user
-        .find(req.body)
-        .limit(+req.query.limit || 10)
-        .skip(+req.query.skip || 0)
-        .exec((err, results) => {
-          if (err) {
-            res.status(500).send(err);
-            return;
-          }
-          res.json(results);
-        });
-    };
-
+    router.get("/user/:id", routers.user.findById);
+    router.post("/user", routers.user.create);
     router
       .route("/users")
-      .get(userFind)
-      .post(userFind);
+      .get(routers.user.find)
+      .post(routers.user.find);
 
     this.express.use("/", router);
   }
