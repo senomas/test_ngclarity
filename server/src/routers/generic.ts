@@ -14,9 +14,48 @@ export class GenericRouter {
       return;
     }
     model
-      .save()
+      .create(req.body)
       .then(v => {
         res.json(v);
+      })
+      .catch(err => {
+        console.log("ERROR", err);
+        res.status(500).send(err);
+      });
+  };
+
+  update = (req, res, next): void => {
+    let model = this.models[req.params.model];
+    if (!model) {
+      res.status(404).send(`Unknown model '${req.params.model}'`);
+      return;
+    }
+    model
+      .update({ _id: Types.ObjectId(req.params.id) }, req.body)
+      .then(v => {
+        res.json(v);
+      })
+      .catch(err => {
+        console.log("ERROR", err);
+        res.status(500).send(err);
+      });
+  };
+
+  delete = (req, res, next): void => {
+    let model = this.models[req.params.model];
+    if (!model) {
+      res.status(404).send(`Unknown model '${req.params.model}'`);
+      return;
+    }
+    model
+      .findByIdAndRemove(Types.ObjectId(req.params.id))
+      .exec()
+      .then(result => {
+        if (!result) {
+          res.status(404).send("No object");
+          return;
+        }
+        res.json(result);
       })
       .catch(err => {
         console.log("ERROR", err);
@@ -30,17 +69,20 @@ export class GenericRouter {
       res.status(404).send(`Unknown model '${req.params.model}'`);
       return;
     }
-    model.findById(Types.ObjectId(req.params.id)).exec((err, result) => {
-      if (err) {
+    model
+      .findById(Types.ObjectId(req.params.id))
+      .exec()
+      .then(result => {
+        if (!result) {
+          res.status(404).send("No object");
+          return;
+        }
+        res.json(result);
+      })
+      .catch(err => {
+        console.log("ERROR", err);
         res.status(500).send(err);
-        return;
-      }
-      if (!result) {
-        res.status(404).send("No object");
-        return;
-      }
-      res.json(result);
-    });
+      });
   };
 
   find = (req, res, next): void => {
@@ -58,7 +100,6 @@ export class GenericRouter {
         .exec()
     ])
       .then(results => {
-        console.log("VALUES", JSON.stringify(results));
         let start = +req.query.skip || 0;
         let count = results[1].length;
         let total = +results[0];

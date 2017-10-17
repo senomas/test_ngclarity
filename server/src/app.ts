@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as express from "express";
+import * as compression from "compression";
 import * as logger from "morgan";
 import * as bodyParser from "body-parser";
 
@@ -17,6 +18,8 @@ class App {
 
   constructor() {
     mongoose.Promise = global.Promise;
+    mongoose.set("debug", true);
+
     this.models = new Models(
       mongoose.createConnection("mongodb://localhost:27017/btnhack", {
         user: "btnhack",
@@ -40,14 +43,16 @@ class App {
     });
 
     this.express = express();
-    this.express.use(errorHandler());
 
     this.middleware();
     this.routes();
   }
 
   private middleware(): void {
+    this.express.disable("x-powered-by");
     this.express.use(logger("dev"));
+    this.express.use(errorHandler());
+    this.express.use(compression());
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
   }
@@ -66,9 +71,11 @@ class App {
     // router.post("/user", routers.user.create);
     // router.post("/user/find", routers.user.find);
 
-    router.get("/:model/:id", routers.generic.findById);
     router.post("/:model", routers.generic.create);
+    router.patch("/:model/:id", routers.generic.update);
+    router.get("/:model/:id", routers.generic.findById);
     router.post("/:model/find", routers.generic.find);
+    router.delete("/:model/:id", routers.generic.delete);
 
     this.express.use("/", router);
   }
