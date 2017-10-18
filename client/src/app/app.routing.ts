@@ -19,7 +19,8 @@ export const ROUTES: Routes = [
   { path: "about", component: AboutComponent },
   { path: "login", component: LoginComponent },
   { path: "user", component: UserListComponent },
-  { path: "user/:id", component: UserEditComponent }
+  { path: "user/:id", component: UserEditComponent },
+  { path: "user-new", component: UserEditComponent }
 ];
 
 export const ROUTING: ModuleWithProviders = RouterModule.forRoot(ROUTES);

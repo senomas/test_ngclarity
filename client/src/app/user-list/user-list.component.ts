@@ -23,6 +23,10 @@ export class UserListComponent implements OnInit {
     this.selected = [];
   }
 
+  onAdd() {
+    this.router.navigate(["user-new"]);
+  }
+
   onEdit() {
     if (this.selected.length == 1) {
       console.log("SELECTED", this.selected);

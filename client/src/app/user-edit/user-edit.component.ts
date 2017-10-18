@@ -10,7 +10,9 @@ import { AppService, User, State } from "../app.service";
   styleUrls: ["./user-edit.component.scss"]
 })
 export class UserEditComponent implements OnInit {
-  user: User;
+  user: User = {};
+
+  warning: any;
 
   constructor(
     private appSvc: AppService,
@@ -19,26 +21,53 @@ export class UserEditComponent implements OnInit {
     private location: Location
   ) {
     this.route.params.subscribe(param => {
-      this.appSvc
-        .getUser(param.id)
-        .then(v => {
-          console.log("USER", v);
-          this.user = v;
-        })
-        .catch(err => {
-          console.log("ERROR", err);
-          // this.router.navigate(["user"]);
-        });
+      if (param.id) {
+        this.appSvc
+          .getUser(param.id)
+          .then(v => {
+            console.log("USER", v);
+            this.user = v;
+          })
+          .catch(err => {
+            console.log("ERROR", err);
+            // this.router.navigate(["user"]);
+          });
+      } else {
+        this.user = {};
+      }
     });
   }
 
   ngOnInit() {}
 
   onSubmit() {
-    this.appSvc
-      .updateUser(this.user)
-      .then(() => this.onBack())
-      .catch(err => console.log(err));
+    if ((this.user as any)._id) {
+      this.appSvc
+        .updateUser(this.user)
+        .then(() => this.onBack())
+        .catch(err => {
+          if (err.statusText) {
+            this.warning = err.statusText;
+          } else {
+            this.warning = "Unknown error";
+          }
+        });
+    } else {
+      this.appSvc
+        .saveUser(this.user)
+        .then(() => this.onBack())
+        .catch(err => {
+          if (err.statusText) {
+            this.warning = err.statusText;
+          } else {
+            this.warning = "Unknown error";
+          }
+        });
+    }
+  }
+
+  clearWarning() {
+    this.warning = undefined;
   }
 
   onBack() {

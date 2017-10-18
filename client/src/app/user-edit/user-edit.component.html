@@ -1,5 +1,5 @@
 <form (ngSubmit)="onSubmit()">
-    <section class="form-block" *ngIf="user">
+    <section class="form-block">
         <label>
             <h1>User</h1>
         </label>
@@ -38,3 +38,31 @@
         </div>
     </section>
 </form>
+<div class="modal static bump-down" *ngIf="warning">
+    <div class="modal-dialog" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <div class="alert alert-danger">
+                        <div class="alert-items">
+                            <div class="alert-item static">
+                                <div class="alert-icon-wrapper">
+                                    <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+                                </div>
+                                <span class="alert-text">
+                                    Need Your Attention
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>{{ warning }}</p>
+            </div>
+            <div class="modal-footer">
+                <button (click)="clearWarning()" class="btn btn-primary" type="button">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>

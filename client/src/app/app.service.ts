@@ -62,6 +62,15 @@ export class AppService {
         .subscribe(v => resolve(v), err => reject(err));
     });
   }
+
+  saveUser(user: User): Promise<User> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .post(`/api/user`, user)
+        .map(v => v.json())
+        .subscribe(v => resolve(v), err => reject(err));
+    });
+  }
 }
 
 export interface List<T> {
@@ -94,5 +103,5 @@ export interface User {
   email?: string;
   firstName?: string;
   lastName?: string;
-  createdAt: Date;
+  createdAt?: Date;
 }
