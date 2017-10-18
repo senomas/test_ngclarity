@@ -86,21 +86,30 @@ export class GenericRouter {
   };
 
   find = (req, res, next): void => {
+    let param = req.body;
+    console.log("find", JSON.stringify(param));
     let model = this.models[req.params.model];
     if (!model) {
       res.status(404).send(`Unknown model '${req.params.model}'`);
       return;
     }
+    let start = param.page.from || 0;
+    let condition: any = {};
+    let sort: any;
+    if (param.sort) {
+      sort = {};
+      sort[param.sort.by] = param.sort.reverse ? -1 : 1;
+    }
     Promise.all([
-      model.count(req.body).exec(),
+      model.count(condition).exec(),
       model
-        .find(req.body)
-        .limit(+req.query.limit || 10)
-        .skip(+req.query.skip || 0)
+        .find(condition)
+        .limit(param.page.size || 10)
+        .skip(start)
+        .sort(sort)
         .exec()
     ])
       .then(results => {
-        let start = +req.query.skip || 0;
         let count = results[1].length;
         let total = +results[0];
         res.json({

@@ -4,9 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "gulp",
-    "build": "gulp scripts",
-    "test": "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'"
+    "dev":
+      "concurrently \"npm run watch\" \"npm run serve\" \"npm run client-dev\"",
+    "start":
+      "concurrently \"npm run watch\" \"npm run watch-client\" \"npm run serve\"",
+    "serve": "nodemon --watch dist dist/index.js",
+    "client-dev": "cd client && ng serve",
+    "watch": "nodemon --watch src -e ts,css,html,json -x \"npm run build\"",
+    "watch-client":
+      "nodemon --watch client/src -e ts,css,html,json -x \"npm run build-client\"",
+    "build": "tsc -p .",
+    "build-client": "cd client && npm run build",
+    "test":
+      "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'"
+  },
+  "nodemonConfig": {
+    "ignore": ["test/*", "docs/*"],
+    "delay": "2500"
   },
   "keywords": [],
   "author": "",
@@ -24,8 +38,7 @@
     "@types/node": "^8.0.34",
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-typescript": "^3.2.2",
+    "concurrently": "^3.5.0",
     "mocha": "^4.0.1",
     "ts-node": "^3.3.0",
     "typescript": "^2.5.3"
@@ -37,6 +50,7 @@
     "del": "^3.0.0",
     "errorhandler": "^1.5.0",
     "express": "^4.16.2",
+    "express-http-proxy": "^1.0.7",
     "express-ws": "^3.0.0",
     "faker": "^4.1.0",
     "mongoose": "^4.12.2",

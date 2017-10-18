@@ -3,6 +3,7 @@ import * as express from "express";
 import * as compression from "compression";
 import * as logger from "morgan";
 import * as bodyParser from "body-parser";
+import * as proxy from "express-http-proxy";
 
 import faker = require("faker");
 import errorHandler = require("errorhandler");
@@ -61,21 +62,18 @@ class App {
     let router = express.Router();
     let routers = new Routers(this.models);
 
-    router.get("/", (req, res, next) => {
-      res.json({
-        message: "Hello World!"
-      });
-    });
+    // router.get("/api/v1/user/:id", routers.user.findById);
+    // router.post("/api/v1/user", routers.user.create);
+    // router.post("/api/v1/user/find", routers.user.find);
 
-    // router.get("/user/:id", routers.user.findById);
-    // router.post("/user", routers.user.create);
-    // router.post("/user/find", routers.user.find);
+    router.post("/api/:model", routers.generic.create);
+    router.patch("/api/:model/:id", routers.generic.update);
+    router.get("/api/:model/:id", routers.generic.findById);
+    router.post("/api/:model/find", routers.generic.find);
+    router.delete("/api/:model/:id", routers.generic.delete);
 
-    router.post("/:model", routers.generic.create);
-    router.patch("/:model/:id", routers.generic.update);
-    router.get("/:model/:id", routers.generic.findById);
-    router.post("/:model/find", routers.generic.find);
-    router.delete("/:model/:id", routers.generic.delete);
+    // router.use("/", express.static(path.join(__dirname, "client")));
+    router.use("/", proxy("localhost:4200"));
 
     this.express.use("/", router);
   }

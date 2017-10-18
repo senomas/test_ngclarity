@@ -5,6 +5,7 @@ export interface User {
   email?: string;
   firstName?: string;
   lastName?: string;
+  createdAt?: Date;
 }
 
 export interface UserModel extends User, Document {}
