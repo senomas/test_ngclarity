@@ -31,9 +31,16 @@ class App {
       if (count == 0) {
         let objs: any[] = [];
         for (let i = 0; i < 1000; i++) {
+          let bd = new Date();
+          bd.setTime(
+            bd.getTime() - Math.floor(Math.random() * 75 * 365 * 24 * 3600000)
+          );
+          let email = faker.internet.email();
           objs.push({
-            email: faker.internet.email(),
+            id: email,
+            email: email,
             firstName: faker.name.firstName(),
+            birthdate: bd,
             lastName: faker.name.lastName()
           });
         }
@@ -71,6 +78,7 @@ class App {
     router.get("/api/:model/:id", routers.generic.findById);
     router.post("/api/:model/find", routers.generic.find);
     router.delete("/api/:model/:id", routers.generic.delete);
+    router.post("/api/:model/delete", routers.generic.deleteMany);
 
     // router.use("/", express.static(path.join(__dirname, "client")));
     router.use("/", proxy("localhost:4200"));

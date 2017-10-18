@@ -13,7 +13,8 @@
     "watch": "nodemon --watch src -e ts,css,html,json -x \"npm run build\"",
     "watch-client":
       "nodemon --watch client/src -e ts,css,html,json -x \"npm run build-client\"",
-    "build": "tsc -p .",
+    "build":
+      "rsync -rtv --delete --include='*.model.ts' --exclude='*' src/models/ client/src/app/models && tsc -p .",
     "build-client": "cd client && npm run build",
     "test":
       "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'"

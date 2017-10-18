@@ -5,11 +5,18 @@ import { Observable } from "rxjs/Observable";
 
 import { Comparator } from "clarity-angular";
 
+import { User } from "./models/user.model";
+import { Product } from "./models/product.model";
+
 @Injectable()
 export class AppService {
   public user: any;
 
   public loading: boolean = false;
+
+  public userRepo = new Repository<User>(this.http, "user");
+
+  public productRepo = new Repository<Product>(this.http, "product");
 
   constructor(private http: Http) {}
 
@@ -27,24 +34,27 @@ export class AppService {
       }, 1000);
     });
   }
+}
 
-  getUser(id: string): Promise<User> {
+export class Repository<T> {
+  constructor(private http: Http, private repoId: string) {}
+
+  get(id: string): Promise<T> {
     return new Promise((resolve, reject) => {
       this.http
-        .get(`/api/user/${id}`)
+        .get(`/api/${this.repoId}/${id}`)
         .map(v => v.json())
         .subscribe(v => resolve(v), err => reject(err));
     });
   }
 
-  getUsers(state: State): Promise<List<User>> {
+  list(state: State): Promise<List<T>> {
     return new Promise((resolve, reject) => {
       this.http
-        .post("/api/user/find", state)
+        .post(`/api/${this.repoId}/find`, state)
         .map(v => v.json())
         .subscribe(
           v => {
-            console.log("RESULT:", v);
             resolve(v);
           },
           err => {
@@ -54,22 +64,40 @@ export class AppService {
     });
   }
 
-  updateUser(user: User): Promise<User> {
+  update(item: T): Promise<T> {
     return new Promise((resolve, reject) => {
       this.http
-        .patch(`/api/user/${(user as any)._id}`, user)
+        .patch(`/api/${this.repoId}/${(item as any)._id}`, item)
         .map(v => v.json())
         .subscribe(v => resolve(v), err => reject(err));
     });
   }
 
-  saveUser(user: User): Promise<User> {
+  save(item: T): Promise<T> {
     return new Promise((resolve, reject) => {
       this.http
-        .post(`/api/user`, user)
+        .post(`/api/${this.repoId}`, item)
         .map(v => v.json())
         .subscribe(v => resolve(v), err => reject(err));
     });
+  }
+
+  delete(val: string | T[]): Promise<T> {
+    if (val instanceof String) {
+      return new Promise((resolve, reject) => {
+        this.http
+          .delete(`/api/${this.repoId}/${val}`)
+          .map(v => v.json())
+          .subscribe(v => resolve(v), err => reject(err));
+      });
+    } else {
+      return new Promise((resolve, reject) => {
+        this.http
+          .post(`/api/${this.repoId}/delete`, val.map(v => (v as any)._id))
+          .map(v => v.json())
+          .subscribe(v => resolve(v), err => reject(err));
+      });
+    }
   }
 }
 
@@ -96,12 +124,4 @@ export interface Filter<T> {
   isActive(): boolean;
   accepts(item: T): boolean;
   changes: Observable<any>;
-}
-
-export interface User {
-  id?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  createdAt?: Date;
 }

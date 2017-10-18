@@ -1,16 +1,12 @@
 <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading" [(clrDgSelected)]="selected">
-    <clr-dg-column>User ID</clr-dg-column>
-    <clr-dg-column [clrDgField]="'email'">Email</clr-dg-column>
-    <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
-    <clr-dg-column [clrDgField]="'lastName'">Last Name</clr-dg-column>
-    <clr-dg-column [clrDgField]="'birthdate'">Birthdate</clr-dg-column>
+    <clr-dg-column [clrDgField]="'id'">ID</clr-dg-column>
+    <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
+    <clr-dg-column [clrDgField]="'description'">Description</clr-dg-column>
 
     <clr-dg-row *ngFor="let item of items" [clrDgItem]="item">
-        <clr-dg-cell>{{item._id}}</clr-dg-cell>
-        <clr-dg-cell>{{item.email}}</clr-dg-cell>
-        <clr-dg-cell>{{item.firstName}}</clr-dg-cell>
-        <clr-dg-cell>{{item.lastName}}</clr-dg-cell>
-        <clr-dg-cell>{{item.birthdate | date: 'dd-MM-yyyy' }}</clr-dg-cell>
+        <clr-dg-cell>{{item.id}}</clr-dg-cell>
+        <clr-dg-cell>{{item.name}}</clr-dg-cell>
+        <clr-dg-cell>{{item.description}}</clr-dg-cell>
     </clr-dg-row>
 
     <clr-dg-footer>
@@ -21,7 +17,7 @@
 <div class="list-action-bar">
     <div class="btn-group">
         <button type="button" class="btn btn-sm btn-secondary" (click)="onAdd()" *ngIf="selected.length == 0">
-            <clr-icon shape="plus"></clr-icon> Create New User</button>
+            <clr-icon shape="plus"></clr-icon> Create New Product</button>
         <button type="button" class="btn btn-sm btn-secondary" (click)="onEdit()" *ngIf="selected.length == 1">
             <clr-icon shape="pencil"></clr-icon> Edit</button>
         <button type="button" class="btn btn-sm btn-secondary" (click)="onDelete()" *ngIf="selected.length > 0">

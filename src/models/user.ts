@@ -1,12 +1,6 @@
 import { Document, Schema } from "mongoose";
 
-export interface User {
-  id?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  createdAt?: Date;
-}
+import { User } from "./user.model";
 
 export interface UserModel extends User, Document {}
 
@@ -15,6 +9,7 @@ export var userSchema: Schema = new Schema({
   email: String,
   firstName: String,
   lastName: String,
+  birthdate: Date,
   createdAt: Date
 });
 

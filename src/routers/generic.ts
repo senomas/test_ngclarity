@@ -63,6 +63,25 @@ export class GenericRouter {
       });
   };
 
+  deleteMany = (req, res, next): void => {
+    console.log("DELETE-MANY", req.body);
+    let model = this.models[req.params.model];
+    if (!model) {
+      res.status(404).send(`Unknown model '${req.params.model}'`);
+      return;
+    }
+    model
+      .remove({
+        _id: { $in: (req.body as string[]).map(v => Types.ObjectId(v)) }
+      })
+      .exec()
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log("ERROR", err);
+        res.status(500).send(err);
+      });
+  };
+
   findById = (req, res, next): void => {
     let model = this.models[req.params.model];
     if (!model) {

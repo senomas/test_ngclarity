@@ -1,8 +1,10 @@
 import { Model } from "mongoose";
 
-import { User, UserModel, userSchema } from "./user";
+import { User } from "./user.model";
+import { UserModel, userSchema } from "./user";
 
-import { Product, ProductModel, productSchema } from "./product";
+import { ProductModel, productSchema } from "./product";
+import { Product } from "./product.model";
 
 import mongoose = require("mongoose");
 

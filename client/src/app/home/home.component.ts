@@ -12,8 +12,8 @@ export class HomeComponent {
 
   ngOnInit() {
     console.log("AppComponent.ngOnInit");
-    if (!this.appSvc.isLogin()) {
-      this.router.navigate(["login"]);
-    }
+    // if (!this.appSvc.isLogin()) {
+    //   this.router.navigate(["login"]);
+    // }
   }
 }
