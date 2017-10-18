@@ -1,0 +1,24 @@
+<div class="login-wrapper">
+    <form class="login" (ngSubmit)="login()">
+        <label class="title">
+            <h3 class="welcome">Welcome to</h3>
+            Company Product Name
+            <h5 class="hint">Use your Company ID to sign in or create one now</h5>
+        </label>
+        <div class="login-group">
+            <input [(ngModel)]="user.name" name="user" class="username" type="text" id="login_username" placeholder="Username">
+            <input [(ngModel)]="user.password" name="password" class="password" type="password" id="login_password" placeholder="Password">
+            <div class="checkbox">
+                <input type="checkbox" id="rememberme">
+                <label for="rememberme">
+                    Remember me
+                </label>
+            </div>
+            <!-- <div class="error active">
+                Invalid user name or password
+            </div> -->
+            <button type="submit" class="btn btn-primary">NEXT</button>
+            <a href="javascript://" class="signup">Sign up for a Company ID</a>
+        </div>
+    </form>
+</div>
