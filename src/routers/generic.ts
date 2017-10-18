@@ -87,7 +87,6 @@ export class GenericRouter {
 
   find = (req, res, next): void => {
     let param = req.body;
-    console.log("find", JSON.stringify(param));
     let model = this.models[req.params.model];
     if (!model) {
       res.status(404).send(`Unknown model '${req.params.model}'`);
@@ -99,6 +98,12 @@ export class GenericRouter {
     if (param.sort) {
       sort = {};
       sort[param.sort.by] = param.sort.reverse ? -1 : 1;
+    }
+    let filters: any[] = param.filters;
+    if (filters) {
+      filters.forEach(element => {
+        condition[element.property] = new RegExp(element.value, "i");
+      });
     }
     Promise.all([
       model.count(condition).exec(),
