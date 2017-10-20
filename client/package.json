@@ -27,6 +27,7 @@
     "clarity-icons": "~0.10.8",
     "clarity-ui": "~0.10.8",
     "core-js": "^2.4.1",
+    "moment": "^2.19.1",
     "mutationobserver-shim": "^0.3.2",
     "rxjs": "^5.4.3",
     "ts-helpers": "^1.1.1",

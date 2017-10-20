@@ -1,0 +1,50 @@
+<form class="form" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <label>
+        <h1>User</h1>
+    </label>
+    <div class="form-group row" *ngFor="let fi of forms">
+        <div [class]="fi.labelClass || 'col-lg-2 col-md-12 col-sm-12 col-xs-12'">
+            <label [for]="fi.id">{{ fi.label }}</label>
+        </div>
+        <div [class]="fi.valueClass || 'col-lg-4 col-md-4 col-sm-12 col-xs-12'" *ngIf="!!fi.fcontrol">
+            <label [for]="fi.id" aria-haspopup="true" role="tooltip" [ngClass]="'tooltip tooltip-validation tooltip-sm' + ((!itemLoaded || fi.fcontrol.valid) ? '' : ' invalid')">
+                <input class="form-control" [formControlName]="fi.id" [name]="fi.id" class=" form-control" type="text" [placeholder]="fi.label"
+                    [readonly]="fi.readonly" [size]="fi.size || 100">
+                <span class="tooltip-content" *ngIf="fi.fcontrol.hasError('required')">
+                    {{ fi.label }} required!
+                </span>
+                <span class="tooltip-content" *ngIf="fi.fcontrol.hasError('minlength')">
+                    {{ fi.label }} too short!
+                </span>
+                <span class="tooltip-content" *ngIf="fi.fcontrol.hasError('maxlength')">
+                    {{ fi.label }} too long!
+                </span>
+                <span class="tooltip-content" *ngIf="fi.fcontrol.hasError('email')">
+                    {{ fi.label }} invalid format!
+                </span>
+            </label>
+        </div>
+        <div [class]="fii.valueClass || 'col-lg-4 col-md-4 col-sm-12 col-xs-12'" *ngFor="let fii of fi.controls">
+            <label [for]="fii.id" aria-haspopup="true" role="tooltip" [ngClass]="'tooltip tooltip-validation tooltip-sm' + ((!itemLoaded || fii.fcontrol.valid) ? '' : ' invalid')">
+                <input class="form-control" [formControlName]="fii.id" [name]="fii.id" class=" form-control" type="text" [placeholder]="fii.label"
+                    [readonly]="fii.readonly" [size]="fii.size || 100">
+                <span class="tooltip-content" *ngIf="fii.fcontrol.hasError('required')">
+                    {{ fii.label }} required!
+                </span>
+                <span class="tooltip-content" *ngIf="fii.fcontrol.hasError('minlength')">
+                    {{ fii.label }} too short!
+                </span>
+                <span class="tooltip-content" *ngIf="fii.fcontrol.hasError('maxlength')">
+                    {{ fii.label }} too long!
+                </span>
+                <span class="tooltip-content" *ngIf="fii.fcontrol.hasError('email')">
+                    {{ fii.label }} invalid format!
+                </span>
+            </label>
+        </div>
+    </div>
+    <div class="action-bar">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-outline" (click)="onBack()">Back</button>
+    </div>
+</form>

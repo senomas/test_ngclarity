@@ -4,23 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev":
-      "concurrently \"npm run watch\" \"npm run serve\" \"npm run client-dev\"",
-    "start":
-      "concurrently \"npm run watch\" \"npm run watch-client\" \"npm run serve\"",
+    "dev": "concurrently \"npm run watch\" \"npm run serve\" \"npm run client-dev\"",
+    "start": "concurrently \"npm run watch\" \"npm run watch-client\" \"npm run serve\"",
     "serve": "nodemon --watch dist dist/index.js",
     "client-dev": "cd client && ng serve",
     "watch": "nodemon --watch src -e ts,css,html,json -x \"npm run build\"",
-    "watch-client":
-      "nodemon --watch client/src -e ts,css,html,json -x \"npm run build-client\"",
-    "build":
-      "rsync -rtv --delete --include='*.model.ts' --exclude='*' src/models/ client/src/app/models && tsc -p .",
+    "watch-client": "nodemon --watch client/src -e ts,css,html,json -x \"npm run build-client\"",
+    "build": "rsync -rtv --delete --include='*.model.ts' --exclude='*' src/models/ client/src/app/models && tsc -p .",
     "build-client": "cd client && npm run build",
-    "test":
-      "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'"
+    "test": "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'"
   },
   "nodemonConfig": {
-    "ignore": ["test/*", "docs/*"],
+    "ignore": [
+      "test/*",
+      "docs/*"
+    ],
     "delay": "2500"
   },
   "keywords": [],
@@ -54,6 +52,7 @@
     "express-http-proxy": "^1.0.7",
     "express-ws": "^3.0.0",
     "faker": "^4.1.0",
+    "moment": "^2.19.1",
     "mongoose": "^4.12.2",
     "morgan": "^1.9.0",
     "npm-watch": "^0.3.0",

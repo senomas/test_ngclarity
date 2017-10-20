@@ -10,20 +10,39 @@ import { AboutComponent } from "./about/about.component";
 import { HomeComponent } from "./home/home.component";
 import { LoginComponent } from "./login/login.component";
 
-import { UserListComponent } from "./user-list/user-list.component";
-import { UserEditComponent } from "./user-edit/user-edit.component";
+import { GenericListComponent } from "./generic-list/generic-list.component";
+import { GenericEditComponent } from "./generic-edit/generic-edit.component";
 
-import { ProductListComponent } from "./product-list/product-list.component";
+import { User_UI } from "./models/user.model";
+import { Product_UI } from "./models/product.model";
 
 export const ROUTES: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
   { path: "home", component: HomeComponent },
   { path: "about", component: AboutComponent },
   { path: "login", component: LoginComponent },
-  { path: "user", component: UserListComponent },
-  { path: "user/:id", component: UserEditComponent },
-  { path: "user-new", component: UserEditComponent },
-  { path: "product", component: ProductListComponent }
+  {
+    path: "user",
+    component: GenericListComponent,
+    data: { ui: User_UI }
+  },
+  { path: "user/:id", component: GenericEditComponent, data: { ui: User_UI } },
+  { path: "user-new", component: GenericEditComponent, data: { ui: User_UI } },
+  {
+    path: "product",
+    component: GenericListComponent,
+    data: { ui: Product_UI }
+  },
+  {
+    path: "product/:id",
+    component: GenericEditComponent,
+    data: { ui: Product_UI }
+  },
+  {
+    path: "product-new",
+    component: GenericEditComponent,
+    data: { ui: Product_UI }
+  }
 ];
 
 export const ROUTING: ModuleWithProviders = RouterModule.forRoot(ROUTES);

@@ -18,10 +18,20 @@ export class AppService {
 
   public productRepo = new Repository<Product>(this.http, "product");
 
+  public warningMessage: any;
+
   constructor(private http: Http) {}
 
   isLogin(): boolean {
     return !!this.user;
+  }
+
+  showWarning(msg) {
+    this.warningMessage = msg;
+  }
+
+  clearWarning() {
+    this.warningMessage = undefined;
   }
 
   login(user): Promise<any> {
