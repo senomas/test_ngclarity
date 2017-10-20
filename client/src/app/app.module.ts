@@ -10,14 +10,8 @@ import { AppService } from "./app.service";
 import { HomeComponent } from "./home/home.component";
 import { AboutComponent } from "./about/about.component";
 import { LoginComponent } from "./login/login.component";
-import { UserListComponent } from "./user-list/user-list.component";
-import { UserEditComponent } from "./user-edit/user-edit.component";
-import { ProductListComponent } from "./product-list/product-list.component";
-import { ListComponent } from "./list/list.component";
-import { EditComponent } from './edit/edit.component';
-import { ProductEditComponent } from './product-edit/product-edit.component';
-import { GenericListComponent } from './generic-list/generic-list.component';
-import { GenericEditComponent } from './generic-edit/generic-edit.component';
+import { GenericListComponent } from "./generic-list/generic-list.component";
+import { GenericEditComponent } from "./generic-edit/generic-edit.component";
 
 @NgModule({
   declarations: [
@@ -25,12 +19,6 @@ import { GenericEditComponent } from './generic-edit/generic-edit.component';
     AboutComponent,
     HomeComponent,
     LoginComponent,
-    UserListComponent,
-    UserEditComponent,
-    ProductListComponent,
-    ListComponent,
-    EditComponent,
-    ProductEditComponent,
     GenericListComponent,
     GenericEditComponent
   ],

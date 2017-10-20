@@ -70,14 +70,18 @@ export class GenericEditComponent implements OnInit {
               let v = {};
               this.forms.forEach((f: any) => {
                 if (f.control) {
-                  if (f.control.format) {
+                  if (f.control.edit_format) {
+                    v[f.id] = f.control.edit_format(_v[f.id]);
+                  } else if (f.control.format) {
                     v[f.id] = f.control.format(_v[f.id]);
                   } else {
                     v[f.id] = _v[f.id];
                   }
                 } else if (f.controls) {
                   f.controls.forEach((fc: any) => {
-                    if (fc.control.format) {
+                    if (fc.control.edit_format) {
+                      v[fc.id] = f.control.edit_format(_v[fc.id]);
+                    } else if (fc.control.format) {
                       v[fc.id] = f.control.format(_v[fc.id]);
                     } else {
                       v[fc.id] = _v[fc.id];

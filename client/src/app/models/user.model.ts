@@ -65,9 +65,12 @@ export const User_UI = {
     {
       id: "birthdate",
       label: "Birthdate",
+      type: "date",
       control: {
         format: v => moment(v).format("DD/MM/YYYY"),
         parse: v => moment(v, "DD/MM/YYYY").toDate(),
+        edit_format: v => moment(v).format("YYYY-MM-DD"),
+        edit_parse: v => moment(v, "YYYY-MM-DD").toDate(),
         validator: {
           required: true,
           maxLength: 20
