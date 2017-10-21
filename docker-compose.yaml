@@ -1,0 +1,38 @@
+version: "2"
+services:
+  btnhack:
+    build: .
+    #user: node
+    environment:
+      - "NODE_ENV=development"
+    links:
+      - mongo:mongo
+    volumes:
+      - ./docker-script.sh:/home/node/docker-script.sh:ro
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+      - node_modules_client:/home/node/app/client/node_modules
+    ports:
+      - 3000:3000
+    command: "/home/node/docker-script.sh"
+  mongo:
+    image: "mongo"
+    ports:
+      - "27017:27017"
+    volumes: 
+      - mongo-data:/data/db
+    command: mongod --auth
+  mongo-express:
+    image: "mongo-express"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=dodol123
+    links:
+      - mongo:mongo
+    ports:
+      - 8081:8081
+
+volumes:
+  mongo-data:
+  node_modules:
+  node_modules_client:

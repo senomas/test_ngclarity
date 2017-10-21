@@ -22,7 +22,7 @@ class App {
     mongoose.set("debug", true);
 
     this.models = new Models(
-      mongoose.createConnection("mongodb://localhost:27017/btnhack", {
+      mongoose.createConnection("mongodb://mongo:27017/btnhack", {
         user: "btnhack",
         pass: "dodol123"
       })
