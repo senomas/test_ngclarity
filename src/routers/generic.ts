@@ -64,7 +64,6 @@ export class GenericRouter {
   };
 
   deleteMany = (req, res, next): void => {
-    console.log("DELETE-MANY", req.body);
     let model = this.models[req.params.model];
     if (!model) {
       res.status(404).send(`Unknown model '${req.params.model}'`);

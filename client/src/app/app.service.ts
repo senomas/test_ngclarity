@@ -93,6 +93,7 @@ export class Repository<T> {
   }
 
   delete(val: string | T[]): Promise<T> {
+    console.log("DELETESSSS", val);
     if (val instanceof String) {
       return new Promise((resolve, reject) => {
         this.http
@@ -103,7 +104,7 @@ export class Repository<T> {
     } else {
       return new Promise((resolve, reject) => {
         this.http
-          .post(`/api/${this.repoId}/delete`, val.map(v => (v as any)._id))
+          .post(`/api/${this.repoId}/delete`, val)
           .map(v => v.json())
           .subscribe(v => resolve(v), err => reject(err));
       });
