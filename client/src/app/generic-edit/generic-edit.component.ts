@@ -98,7 +98,17 @@ export class GenericEditComponent implements OnInit {
             });
         } else {
           this.item = {};
-          this.formGroup.setValue(this.item);
+          let v = {};
+          this.forms.forEach((f: any) => {
+            if (f.control) {
+              v[f.id] = null;
+            } else if (f.controls) {
+              f.controls.forEach((fc: any) => {
+                v[fc.id] = null;
+              });
+            }
+          });
+          this.formGroup.setValue(v);
         }
       });
     });
@@ -135,14 +145,18 @@ export class GenericEditComponent implements OnInit {
     let v = this.formGroup.value;
     this.forms.forEach((f: any) => {
       if (f.control) {
-        if (f.control.parse) {
+        if (f.control.edit_parse) {
+          this.item[f.id] = f.control.edit_parse(v[f.id]);
+        } else if (f.control.parse) {
           this.item[f.id] = f.control.parse(v[f.id]);
         } else {
           this.item[f.id] = v[f.id];
         }
       } else if (f.controls) {
         f.controls.forEach((fc: any) => {
-          if (fc.control.parse) {
+          if (fc.control.edit_parse) {
+            this.item[fc.id] = f.control.edit_parse(v[fc.id]);
+          } else if (fc.control.parse) {
             this.item[fc.id] = f.control.parse(v[fc.id]);
           } else {
             this.item[fc.id] = v[fc.id];
@@ -150,7 +164,25 @@ export class GenericEditComponent implements OnInit {
         });
       }
     });
-    // TODO SAVE
+    if (this.item._id) {
+      this.repo
+        .update(this.item)
+        .then(v => {
+          this.location.back();
+        })
+        .catch(err => {
+          console.log("Error save", this.ui.label, err, this.item);
+        });
+    } else {
+      this.repo
+        .save(this.item)
+        .then(v => {
+          this.location.back();
+        })
+        .catch(err => {
+          console.log("Error save", this.ui.label, err, this.item);
+        });
+    }
   }
 
   onBack() {
