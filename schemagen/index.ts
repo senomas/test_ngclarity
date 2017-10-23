@@ -52,12 +52,32 @@ function generateModel(id: string, data: any) {
     data.view.id = id;
     if (data.view.list) {
       data.view.list.forEach(vk => {
-        vk.schema = schemas[vk.id];
+        if (vk.id && typeof schemas[vk.id] === "object") {
+          vk.schema = schemas[vk.id];
+        }
+        if (vk.items) {
+          vk.items.forEach(vki => {
+            if (vki.id && typeof schemas[vki.id] === "object") {
+              vki.schema = schemas[vki.id];
+            }
+          })
+        }
       });
     }
     if (data.view.edit) {
       data.view.edit.forEach(vk => {
-        vk.schema = schemas[vk.id];
+        if (vk.id) {
+          if (vk.id && typeof schemas[vk.id] === "object") {
+            vk.schema = schemas[vk.id];
+          }
+        }
+        if (vk.items) {
+          vk.items.forEach(vki => {
+            if (vki.id && typeof schemas[vki.id] === "object") {
+              vki.schema = schemas[vki.id];
+            }
+          })
+        }
       });
     }
     result += `}\n\nexport const ${name}View = ${JSON.stringify(data.view, undefined, 2)};\n`;

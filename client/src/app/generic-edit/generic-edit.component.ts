@@ -46,12 +46,33 @@ export class GenericEditComponent implements OnInit {
       console.log("GenericEdit", v);
       this.ui = v.ui;
       this.ui.edit.forEach((_v: any) => {
-        if (typeof _v === "object") {
-          let v = Object.create(_v);
+        if (!_v.items) {
+          let v = Object.assign({}, _v);
+          if (!v.type) {
+            if (v.schema && v.schema.type === "Date") {
+              v.type = "date";
+            } else {
+              v.type = "text";
+            }
+          }
           this.forms.push(v);
           fb[v.id] = v.fcontrol = this.createFormControl(v);
         } else {
-          console.log("UNKNOWN TYPE", typeof _v, _v);
+          let v = Object.assign({}, _v);
+          v.controls = [];
+          _v.items.forEach(_vi => {
+            let vi = Object.assign({}, _vi);
+            if (!vi.type) {
+              if (vi.schema && vi.schema.type === "Date") {
+                vi.type = "date";
+              } else {
+                vi.type = "text";
+              }
+            }
+            fb[vi.id] = vi.fcontrol = this.createFormControl(vi);
+            v.controls.push(vi);
+          });
+          this.forms.push(v);
         }
       });
       this.formGroup = this.formBuilder.group(fb);
@@ -65,18 +86,28 @@ export class GenericEditComponent implements OnInit {
               this.item = _v;
               let v = {};
               this.forms.forEach((f: any) => {
-                if (typeof f === "object") {
+                if (!f.items) {
                   let _vf = this.getValue(f.id, _v);
                   if (f.format) {
                     v[f.id] = f.control.format(_vf);
                   } else if (f.type === "date") {
                     v[f.id] = moment(_vf).format("YYYY-MM-DD");
-                  } else if (!f.type && f.schema && f.schema.type === "Date") {
-                    f.type = "date";
-                    v[f.id] = moment(_vf).format("YYYY-MM-DD");
                   } else {
                     v[f.id] = _vf;
                   }
+                  if (!f.type) f.type = "text";
+                } else {
+                  f.items.forEach((fi: any) => {
+                    let _vf = this.getValue(fi.id, _v);
+                    if (fi.format) {
+                      v[fi.id] = fi.control.format(_vf);
+                    } else if (fi.type === "date") {
+                      v[fi.id] = moment(_vf).format("YYYY-MM-DD");
+                    } else {
+                      v[fi.id] = _vf;
+                    }
+                    if (!fi.type) fi.type = "text";
+                  })
                 }
               });
               console.log("VALUE", v);
@@ -91,8 +122,12 @@ export class GenericEditComponent implements OnInit {
           this.item = {};
           let v = {};
           this.forms.forEach((f: any) => {
-            if (typeof f === "object") {
+            if (!f.items) {
               v[f.id] = null;
+            } else {
+              f.items.forEach((fi: any) => {
+                v[fi.id] = null;
+              })
             }
           });
           console.log("VALUE", v);
@@ -131,22 +166,21 @@ export class GenericEditComponent implements OnInit {
 
   createFormControl(fc): FormControl {
     let validators: ValidatorFn[] = [];
-    for (let v in fc.validator) {
-      switch (v) {
-        case "required":
-          validators.push(Validators.required);
-          break;
-        case "maxLength":
-          validators.push(Validators.maxLength(fc.validator[v]));
-          break;
-        case "minLength":
-          validators.push(Validators.minLength(fc.validator[v]));
-          break;
-        case "email":
-          validators.push(Validators.email);
-          break;
-        default:
-          console.warn("Unsupported validator", v);
+    if (fc.schema) {
+      if (fc.schema.required) {
+        validators.push(Validators.required);
+      }
+      if (fc.schema.length) {
+        validators.push(Validators.maxLength(fc.schema.length));
+      }
+      if (fc.schema.minLength) {
+        validators.push(Validators.minLength(fc.schema.minLength));
+      }
+      if (fc.schema.email) {
+        validators.push(Validators.email);
+      }
+      if (fc.schema.pattern) {
+        validators.push(Validators.pattern(fc.schema.pattern));
       }
     }
     return new FormControl(null, validators);
@@ -155,7 +189,7 @@ export class GenericEditComponent implements OnInit {
   onSubmit() {
     let v = this.formGroup.value;
     this.forms.forEach((f: any) => {
-      if (typeof f === "object") {
+      if (!f.items) {
         let val = v[f.id];
         if (f.parse) {
           val = f.parse(val);

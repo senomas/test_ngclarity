@@ -39,13 +39,14 @@ export const UserView = {
         "index": {
           "unique": true
         },
+        "required": true,
+        "minLength": 3,
         "length": 200
       }
     },
     {
       "id": "address.city",
-      "label": "City",
-      "schema": "String"
+      "label": "City"
     },
     {
       "id": "dob",
@@ -59,30 +60,40 @@ export const UserView = {
   "edit": [
     {
       "id": "_id",
-      "label": "ID"
+      "label": "ID",
+      "readonly": true
     },
     {
-      "id": "email",
-      "label": "Email",
-      "schema": {
-        "type": "String",
-        "index": {
-          "unique": true
-        },
-        "required": true,
-        "length": 200
-      }
-    },
-    {
-      "id": "username",
       "label": "Username",
-      "schema": {
-        "type": "String",
-        "index": {
-          "unique": true
+      "items": [
+        {
+          "id": "username",
+          "label": "Username",
+          "schema": {
+            "type": "String",
+            "index": {
+              "unique": true
+            },
+            "required": true,
+            "minLength": 3,
+            "length": 200
+          }
         },
-        "length": 200
-      }
+        {
+          "id": "email",
+          "label": "Email",
+          "schema": {
+            "type": "String",
+            "index": {
+              "unique": true
+            },
+            "required": true,
+            "email": true,
+            "minLength": 3,
+            "length": 200
+          }
+        }
+      ]
     },
     {
       "id": "name",
@@ -90,13 +101,18 @@ export const UserView = {
       "schema": {
         "type": "String",
         "index": true,
+        "required": true,
+        "minLength": 3,
         "length": 200
       }
     },
     {
       "id": "address.city",
-      "label": "City",
-      "schema": "String"
+      "label": "City"
+    },
+    {
+      "id": "phone",
+      "label": "Phone"
     },
     {
       "id": "dob",
