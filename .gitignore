@@ -1,3 +1,4 @@
 dist
 node_modules
-src/models/*.ts
+src/.models
+client/src/app/models

@@ -5,7 +5,7 @@ import { Models } from "../models/models";
 import * as express from "express";
 
 export class GenericRouter {
-  constructor(private models: Models) {}
+  constructor(private models: Models) { }
 
   create = (req, res, next): void => {
     let model = this.models[req.params.model];

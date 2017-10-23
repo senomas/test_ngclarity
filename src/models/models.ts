@@ -1,13 +1,13 @@
 import { Model, Schema } from "mongoose";
 
-import { Meta } from "./meta.model"
-import { MetaModel, MetaSchema } from "./meta"
+import { Meta } from "../.models/meta.model"
+import { MetaModel, MetaSchema } from "../.models/meta"
 
-import { User } from "./user.model";
-import { UserModel, UserSchema } from "./user";
+import { User } from "../.models/user.model";
+import { UserModel, UserSchema } from "../.models/user";
 
-import { ProductModel, ProductSchema } from "./product";
-import { Product } from "./product.model";
+import { ProductModel, ProductSchema } from "../.models/product";
+import { Product } from "../.models/product.model";
 
 import * as mongoose from "mongoose";
 

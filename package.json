@@ -8,7 +8,7 @@
     "start": "concurrently \"npm run watch\" \"npm run watch-client\" \"npm run serve\"",
     "serve": "nodemon --watch dist dist/index.js",
     "client-dev": "cd client && ./node_modules/.bin/ng serve",
-    "watch": "nodemon --watch src --ignore 'src/models/*.ts' -e ts,css,html,json,yaml -x \"npm run build\"",
+    "watch": "nodemon --watch src -e ts,css,html,json,yaml -x \"npm run build\"",
     "watch-client": "nodemon --watch client/src -e ts,css,html,json -x \"npm run build-client\"",
     "build": "node node_modules/schemagen/index.js && tsc -p .",
     "build-client": "cd client && npm run build",

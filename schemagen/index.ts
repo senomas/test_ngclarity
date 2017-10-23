@@ -33,7 +33,9 @@ function generateModel(id: string, data: any) {
   } else {
     result += `}\n`;
   }
-  fs.writeFileSync(`${base}/src/models/${id}.model.ts`, result);
+  if (!fs.existsSync(`${base}/src/.models`)) fs.mkdirSync(`${base}/src/.models`);
+  if (!fs.existsSync(`${base}/client/src/app/models`)) fs.mkdirSync(`${base}/client/src/app/models`);
+  fs.writeFileSync(`${base}/src/.models/${id}.model.ts`, result);
   fs.writeFileSync(`${base}/client/src/app/models/${id}.model.ts`, result);
 }
 
@@ -79,7 +81,7 @@ function generateSchema(id: string, data: any) {
     }
   }
   result += `\n});`;
-  fs.writeFileSync(`${base}/src/models/${id}.ts`, result);
+  fs.writeFileSync(`${base}/src/.models/${id}.ts`, result);
 }
 
 function generateSchemaProp(indent: string, p: string, value: any): string {
