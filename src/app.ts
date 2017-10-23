@@ -10,6 +10,7 @@ import errorHandler = require("errorhandler");
 import mongoose = require("mongoose");
 
 import { Models } from "./models/models";
+import { Meta } from "./models/meta.model";
 
 import { Routers } from "./routers/routers";
 
@@ -17,43 +18,72 @@ class App {
   public express: express.Application;
   private models: Models;
 
-  constructor() {
-    mongoose.Promise = global.Promise;
-    mongoose.set("debug", true);
+  VERSION: string = "0.9.0.1";
 
-    this.models = new Models(
-      mongoose.createConnection("mongodb://mongo:27017/btnhack", {
-        user: "btnhack",
-        pass: "dodol123"
-      })
-    );
+  constructor() {
+    this.express = express();
+    this.init().then(() => {
+      console.log("INIT DONE");
+    }).catch(err => console.error(err));
+  }
+
+  private async init() {
+    try {
+      console.log("HERE 1");
+      mongoose.Promise = global.Promise;
+      mongoose.set("debug", true);
+
+      console.log("HERE 2");
+      this.models = new Models(
+        mongoose.createConnection("mongodb://mongo:27017/btnhack", {
+          user: "btnhack",
+          pass: "dodol123"
+        })
+      );
+      console.log("HERE 3", this.models.meta);
+      let ver: Meta[] = await this.models.meta.find({ id: "VERSION" }).exec() as Meta[];
+      if (ver.length == 0) {
+        ver.push({ id: "VERSION", version: this.VERSION });
+        let res = await this.models.meta.create(ver);
+        console.log("RES", res);
+      } else if (ver[0].version !== this.VERSION) {
+        console.error("OLD VERSION", ver);
+      } else if (ver[0].version.startsWith("0.")) {
+        console.error("BETA VERSION", ver);
+        await this.clearDB();
+        await this.initDB();
+      } else {
+        console.error("CURRENT VERSION", ver);
+      }
+
+      this.middleware();
+      this.routes();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  private async clearDB() {
+    console.log("clearDB");
+    await this.models.user.collection.drop();
+    await this.models.product.collection.drop();
+  }
+
+  private async initDB() {
+    console.log("initDB");
     this.models.user.count({}, (err, count) => {
       if (count == 0) {
         let objs: any[] = [];
         for (let i = 0; i < 1000; i++) {
-          let bd = new Date();
-          bd.setTime(
-            bd.getTime() - Math.floor(Math.random() * 75 * 365 * 24 * 3600000)
-          );
-          let email = faker.internet.email();
-          objs.push({
-            id: email,
-            email: email,
-            firstName: faker.name.firstName(),
-            birthdate: bd,
-            lastName: faker.name.lastName()
-          });
+          let user = faker.helpers.contextualCard();
+          console.log("USER", user);
+          objs.push(user);
         }
         this.models.user.insertMany(objs, (err, res) => {
           console.log("INSERTS", err);
         });
       }
     });
-
-    this.express = express();
-
-    this.middleware();
-    this.routes();
   }
 
   private middleware(): void {

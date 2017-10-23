@@ -20,7 +20,7 @@ export class AppService {
 
   public warningMessage: any;
 
-  constructor(private http: Http) {}
+  constructor(private http: Http) { }
 
   isLogin(): boolean {
     return !!this.user;
@@ -47,7 +47,7 @@ export class AppService {
 }
 
 export class Repository<T> {
-  constructor(private http: Http, private repoId: string) {}
+  constructor(private http: Http, private repoId: string) { }
 
   get(id: string): Promise<T> {
     return new Promise((resolve, reject) => {
@@ -64,12 +64,12 @@ export class Repository<T> {
         .post(`/api/${this.repoId}/find`, state)
         .map(v => v.json())
         .subscribe(
-          v => {
-            resolve(v);
-          },
-          err => {
-            reject(err);
-          }
+        v => {
+          resolve(v);
+        },
+        err => {
+          reject(err);
+        }
         );
     });
   }

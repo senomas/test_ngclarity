@@ -1,0 +1,40 @@
+id: user
+label: User
+schema:
+  name: 
+    type: String
+    index: true
+    length: 200
+  username:
+    type: String
+    index:
+      unique: true
+    length: 200
+  avatar: String
+  email:
+    type: String
+    index: 
+      unique: true
+    required: true
+    length: 200
+  dob:
+    type: Date
+    required: true
+  phone: String
+  address:
+    schema:
+      street: String
+      suite: String
+      city: String
+      zipcode: String
+      geo: 
+        schema:
+          lat: String
+          lng: String
+  website: String
+  company:
+    schema:
+      name: String
+      catchPhrase: String
+      bs: String
+  createdAt: Date
