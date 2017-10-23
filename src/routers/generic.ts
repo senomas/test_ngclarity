@@ -37,7 +37,11 @@ export class GenericRouter {
       })
       .catch(err => {
         console.log("ERROR", err);
-        res.status(500).send(err);
+        if (err.name === "MongoError" && err.code === 11000) {
+          res.status(500).send({ code: err.code, message: err.message });
+        } else {
+          res.status(500).send(err);
+        }
       });
   };
 

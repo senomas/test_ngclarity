@@ -54,7 +54,7 @@ export class Repository<T> {
       this.http
         .get(`/api/${this.repoId}/${id}`)
         .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(err));
+        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
     });
   }
 
@@ -63,14 +63,7 @@ export class Repository<T> {
       this.http
         .post(`/api/${this.repoId}/find`, state)
         .map(v => v.json())
-        .subscribe(
-        v => {
-          resolve(v);
-        },
-        err => {
-          reject(err);
-        }
-        );
+        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
     });
   }
 
@@ -79,7 +72,7 @@ export class Repository<T> {
       this.http
         .patch(`/api/${this.repoId}/${(item as any)._id}`, item)
         .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(err));
+        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
     });
   }
 
@@ -88,7 +81,7 @@ export class Repository<T> {
       this.http
         .post(`/api/${this.repoId}`, item)
         .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(err));
+        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
     });
   }
 
@@ -99,16 +92,29 @@ export class Repository<T> {
         this.http
           .delete(`/api/${this.repoId}/${val}`)
           .map(v => v.json())
-          .subscribe(v => resolve(v), err => reject(err));
+          .subscribe(v => resolve(v), err => reject(this.parseError(err)));
       });
     } else {
       return new Promise((resolve, reject) => {
         this.http
           .post(`/api/${this.repoId}/delete`, val)
           .map(v => v.json())
-          .subscribe(v => resolve(v), err => reject(err));
+          .subscribe(v => resolve(v), err => reject(this.parseError(err)));
       });
     }
+  }
+
+  parseError(err): any {
+    try {
+      let body = JSON.parse(err._body);
+      if (body.message) {
+        return body.message;
+      }
+    } catch (perr) {
+      console.log("parseError", err, perr);
+      return err;
+    }
+    return err;
   }
 }
 

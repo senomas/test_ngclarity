@@ -42,10 +42,10 @@ view:
   list:
     - id: _id
       label: ID
-    - id: email
-      label: Email
     - id: username
       label: Username
+    - id: address.city
+      label: City
     - id: dob
       label: Date of Birth
   edit:
@@ -53,8 +53,11 @@ view:
       label: ID
     - id: email
       label: Email
+    - id: username
+      label: Username
     - id: name
       label: Name
+    - id: address.city
+      label: City
     - id: dob
       label: Date of Birth
-      type: date

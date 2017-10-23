@@ -2,7 +2,7 @@
     <clr-dg-column *ngFor="let f of ui.list" [clrDgField]="f.id">{{ f.label || f.id }}</clr-dg-column>
 
     <clr-dg-row *ngFor="let item of items" [clrDgItem]="item._id">
-        <clr-dg-cell *ngFor="let f of ui.list">{{ f.format ? f.format(item[f.id]) : item[f.id] }}</clr-dg-cell>
+        <clr-dg-cell *ngFor="let f of ui.list">{{ getValue(f, item) }}</clr-dg-cell>
     </clr-dg-row>
 
     <clr-dg-footer>

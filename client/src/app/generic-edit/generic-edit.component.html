@@ -1,6 +1,6 @@
 <form class="form" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
     <label>
-        <h1>User</h1>
+        <h1>{{ ui.label || ui.id }}</h1>
     </label>
     <div class="form-group row" *ngFor="let fi of forms">
         <div [class]="fi.labelClass || 'col-lg-2 col-md-12 col-sm-12 col-xs-12'">

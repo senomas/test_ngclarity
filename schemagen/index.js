@@ -22,13 +22,24 @@ catch (err) {
 function generateModel(id, data) {
     let name = id.charAt(0).toUpperCase() + id.slice(1);
     let result = `export interface ${name} {\n`;
+    let schemas = {};
     for (let p in data.schema) {
         if (data.schema.hasOwnProperty(p)) {
-            result += generateModelProp('  ', p, data.schema[p]);
+            result += generateModelProp('  ', null, p, data.schema[p], schemas);
         }
     }
     if (data.view) {
         data.view.id = id;
+        if (data.view.list) {
+            data.view.list.forEach(vk => {
+                vk.schema = schemas[vk.id];
+            });
+        }
+        if (data.view.edit) {
+            data.view.edit.forEach(vk => {
+                vk.schema = schemas[vk.id];
+            });
+        }
         result += `}\n\nexport const ${name}View = ${JSON.stringify(data.view, undefined, 2)};\n`;
     }
     else {
@@ -41,7 +52,15 @@ function generateModel(id, data) {
     fs.writeFileSync(`${base}/src/.models/${id}.model.ts`, result);
     fs.writeFileSync(`${base}/client/src/app/models/${id}.model.ts`, result);
 }
-function generateModelProp(indent, p, value) {
+function generateModelProp(indent, parent, p, value, schemas) {
+    let fp;
+    if (parent) {
+        fp = `${parent}.${p}`;
+    }
+    else {
+        fp = p;
+    }
+    schemas[`${fp}`] = value;
     if (typeof value === "string") {
         return `${indent}${p}?:${value}\n`;
     }
@@ -59,7 +78,7 @@ function generateModelProp(indent, p, value) {
         let result = `${indent}${p}?: {\n`;
         for (let pp in value.schema) {
             if (value.schema.hasOwnProperty(pp)) {
-                result += generateModelProp(`${indent}  `, pp, value.schema[pp]);
+                result += generateModelProp(`${indent}  `, fp, pp, value.schema[pp], schemas);
             }
         }
         result += `${indent}}\n`;

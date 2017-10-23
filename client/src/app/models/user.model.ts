@@ -32,16 +32,28 @@ export const UserView = {
       "label": "ID"
     },
     {
-      "id": "email",
-      "label": "Email"
+      "id": "username",
+      "label": "Username",
+      "schema": {
+        "type": "String",
+        "index": {
+          "unique": true
+        },
+        "length": 200
+      }
     },
     {
-      "id": "username",
-      "label": "Username"
+      "id": "address.city",
+      "label": "City",
+      "schema": "String"
     },
     {
       "id": "dob",
-      "label": "Date of Birth"
+      "label": "Date of Birth",
+      "schema": {
+        "type": "Date",
+        "required": true
+      }
     }
   ],
   "edit": [
@@ -51,16 +63,48 @@ export const UserView = {
     },
     {
       "id": "email",
-      "label": "Email"
+      "label": "Email",
+      "schema": {
+        "type": "String",
+        "index": {
+          "unique": true
+        },
+        "required": true,
+        "length": 200
+      }
+    },
+    {
+      "id": "username",
+      "label": "Username",
+      "schema": {
+        "type": "String",
+        "index": {
+          "unique": true
+        },
+        "length": 200
+      }
     },
     {
       "id": "name",
-      "label": "Name"
+      "label": "Name",
+      "schema": {
+        "type": "String",
+        "index": true,
+        "length": 200
+      }
+    },
+    {
+      "id": "address.city",
+      "label": "City",
+      "schema": "String"
     },
     {
       "id": "dob",
       "label": "Date of Birth",
-      "type": "date"
+      "schema": {
+        "type": "Date",
+        "required": true
+      }
     }
   ],
   "id": "user"

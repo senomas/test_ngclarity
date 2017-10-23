@@ -5,6 +5,7 @@ import { AppService, Repository, State } from "../app.service";
 
 import { Observable } from "rxjs/Rx";
 import "rxjs/add/operator/first";
+import * as moment from "moment";
 
 @Component({
   selector: "app-generic-list",
@@ -79,7 +80,6 @@ export class GenericListComponent implements OnInit, OnDestroy {
     this.repo
       .list(state)
       .then(v => {
-        console.log("RESULT", v);
         this.items = v.list;
         this.total = v.total;
       })
@@ -90,5 +90,21 @@ export class GenericListComponent implements OnInit, OnDestroy {
           this.appSvc.showWarning("Unknown error");
         }
       });
+  }
+
+  getValue(f: any, v: any): any {
+    let res: any = v;
+    f.id.split(".").forEach(k => {
+      res = res[k];
+      if (!res) return null;
+    })
+    if (f.format) {
+      res = f.format(res);
+    } else if (f.type === "date") {
+      res = moment(res).format("DD/MM/YYYY");
+    } else if (!f.type && f.schema && f.schema.type === "Date") {
+      res = moment(res).format("DD/MM/YYYY");
+    }
+    return res;
   }
 }

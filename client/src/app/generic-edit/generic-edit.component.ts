@@ -50,15 +50,8 @@ export class GenericEditComponent implements OnInit {
           let v = Object.create(_v);
           this.forms.push(v);
           fb[v.id] = v.fcontrol = this.createFormControl(v);
-        } else if (_v.controls) {
-          let v = Object.create(_v);
-          v.controls = [];
-          _v.controls.forEach((_u: any) => {
-            let u = Object.create(_u);
-            v.controls.push(u);
-            fb[u.id] = u.fcontrol = this.createFormControl(u.control);
-          });
-          this.forms.push(v);
+        } else {
+          console.log("UNKNOWN TYPE", typeof _v, _v);
         }
       });
       this.formGroup = this.formBuilder.group(fb);
@@ -68,27 +61,22 @@ export class GenericEditComponent implements OnInit {
           this.repo
             .get(param.id)
             .then(_v => {
-              console.log("REPO", _v);
+              console.log("RESULT", _v);
               this.item = _v;
               let v = {};
               this.forms.forEach((f: any) => {
-                console.log("FF", f);
                 if (typeof f === "object") {
+                  let _vf = this.getValue(f.id, _v);
                   if (f.format) {
-                    v[f.id] = f.control.format(_v[f.id]);
+                    v[f.id] = f.control.format(_vf);
                   } else if (f.type === "date") {
-                    v[f.id] = moment(_v[f.id]).format("YYYY-MM-DD");
+                    v[f.id] = moment(_vf).format("YYYY-MM-DD");
+                  } else if (!f.type && f.schema && f.schema.type === "Date") {
+                    f.type = "date";
+                    v[f.id] = moment(_vf).format("YYYY-MM-DD");
                   } else {
-                    v[f.id] = _v[f.id];
+                    v[f.id] = _vf;
                   }
-                } else if (f.controls) {
-                  f.controls.forEach((fc: any) => {
-                    if (fc.format) {
-                      v[fc.id] = f.format(_v[fc.id]);
-                    } else {
-                      v[fc.id] = _v[fc.id];
-                    }
-                  });
                 }
               });
               console.log("VALUE", v);
@@ -97,24 +85,44 @@ export class GenericEditComponent implements OnInit {
             })
             .catch(err => {
               console.log("ERROR", err);
-              // this.router.navigate(["user"]);
+              this.router.navigate(["user"]);
             });
         } else {
           this.item = {};
           let v = {};
           this.forms.forEach((f: any) => {
-            if (f.control) {
+            if (typeof f === "object") {
               v[f.id] = null;
-            } else if (f.controls) {
-              f.controls.forEach((fc: any) => {
-                v[fc.id] = null;
-              });
             }
           });
+          console.log("VALUE", v);
           this.formGroup.setValue(v);
+          this.itemLoaded = true;
         }
       });
     });
+  }
+
+  getValue(keys: string, v: any): any {
+    let res: any = v;
+    keys.split(".").forEach(k => {
+      res = res[k];
+      if (!res) return null;
+    })
+    return res;
+  }
+
+  setValue(keys: string, data: any, value: any) {
+    let kx = keys.split(".");
+    let pd: any = data;
+    kx.slice(0, -1).forEach(k => {
+      if (!pd[k]) {
+        pd[k] = {};
+      }
+      pd = pd[k];
+    });
+    let pkl = kx.slice(-1)[0];
+    pd[pkl] = value;
   }
 
   ngOnDestroy() {
@@ -147,26 +155,19 @@ export class GenericEditComponent implements OnInit {
   onSubmit() {
     let v = this.formGroup.value;
     this.forms.forEach((f: any) => {
-      if (f.control) {
-        if (f.control.edit_parse) {
-          this.item[f.id] = f.control.edit_parse(v[f.id]);
-        } else if (f.control.parse) {
-          this.item[f.id] = f.control.parse(v[f.id]);
-        } else {
-          this.item[f.id] = v[f.id];
+      if (typeof f === "object") {
+        let val = v[f.id];
+        if (f.parse) {
+          val = f.parse(val);
+        } else if (f.type === "date") {
+          val = moment(val, "YYYY-MM-DD").toDate();
+        } else if (!f.type && f.schema && f.schema.type === "Date") {
+          val = moment(val, "YYYY-MM-DD").toDate();
         }
-      } else if (f.controls) {
-        f.controls.forEach((fc: any) => {
-          if (fc.control.edit_parse) {
-            this.item[fc.id] = f.control.edit_parse(v[fc.id]);
-          } else if (fc.control.parse) {
-            this.item[fc.id] = f.control.parse(v[fc.id]);
-          } else {
-            this.item[fc.id] = v[fc.id];
-          }
-        });
+        this.setValue(f.id, this.item, val);
       }
     });
+    console.log("SAVE", this.item);
     if (this.item._id) {
       this.repo
         .update(this.item)
@@ -174,7 +175,8 @@ export class GenericEditComponent implements OnInit {
           this.location.back();
         })
         .catch(err => {
-          console.log("Error save", this.ui.label, err, this.item);
+          console.log("Error update", this.ui.label, err, this.item);
+          this.appSvc.showWarning(err);
         });
     } else {
       this.repo
@@ -184,6 +186,7 @@ export class GenericEditComponent implements OnInit {
         })
         .catch(err => {
           console.log("Error save", this.ui.label, err, this.item);
+          this.appSvc.showWarning(err);
         });
     }
   }

@@ -10,7 +10,7 @@
     "client-dev": "cd client && ./node_modules/.bin/ng serve",
     "watch": "nodemon --watch src -e ts,css,html,json,yaml -x \"npm run build\"",
     "watch-client": "nodemon --watch client/src -e ts,css,html,json -x \"npm run build-client\"",
-    "build": "node node_modules/schemagen/index.js && tsc -p .",
+    "build": "cd schemagen && npm run build && cd .. && node node_modules/schemagen/index.js && tsc -p .",
     "build-client": "cd client && npm run build",
     "test": "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'"
   },

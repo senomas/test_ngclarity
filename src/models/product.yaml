@@ -19,3 +19,11 @@ view:
       label: ID
     - id: name
       label: Name
+  edit:
+    - id: id
+      label: ID
+    - id: name
+      label: Name
+    - id: description
+      label: Description
+
