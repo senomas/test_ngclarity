@@ -1,0 +1,21 @@
+schema:
+  id: 
+    type: String
+    index: true
+    length: 100
+  name: 
+    type: String
+    index: true
+    length: 100
+  description:
+    type: String
+    length: 1000
+  createdAt: Date
+
+view:
+  label: Product
+  list:
+    - id: id
+      label: ID
+    - id: name
+      label: Name

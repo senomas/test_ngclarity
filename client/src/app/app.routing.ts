@@ -13,8 +13,8 @@ import { LoginComponent } from "./login/login.component";
 import { GenericListComponent } from "./generic-list/generic-list.component";
 import { GenericEditComponent } from "./generic-edit/generic-edit.component";
 
-import { User_UI } from "./models/user.model";
-import { Product_UI } from "./models/product.model";
+import { UserView } from "./models/user.model";
+import { ProductView } from "./models/product.model";
 
 export const ROUTES: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
@@ -24,24 +24,24 @@ export const ROUTES: Routes = [
   {
     path: "user",
     component: GenericListComponent,
-    data: { ui: User_UI }
+    data: { ui: UserView }
   },
-  { path: "user/:id", component: GenericEditComponent, data: { ui: User_UI } },
-  { path: "user-new", component: GenericEditComponent, data: { ui: User_UI } },
+  { path: "user/:id", component: GenericEditComponent, data: { ui: UserView } },
+  { path: "user-new", component: GenericEditComponent, data: { ui: UserView } },
   {
     path: "product",
     component: GenericListComponent,
-    data: { ui: Product_UI }
+    data: { ui: ProductView }
   },
   {
     path: "product/:id",
     component: GenericEditComponent,
-    data: { ui: Product_UI }
+    data: { ui: ProductView }
   },
   {
     path: "product-new",
     component: GenericEditComponent,
-    data: { ui: Product_UI }
+    data: { ui: ProductView }
   }
 ];
 

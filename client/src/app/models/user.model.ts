@@ -1,98 +1,67 @@
-import * as moment from "moment";
-
 export interface User {
-  name?: string;
-  username?: string;
-  avatar?: string;
-  email?: string;
-  dob?: Date;
-  phone?: string;
-  address: {
-    street?: string;
-    suite?: string;
-    city?: string;
-    zipcode?: string;
+  name?:string
+  username?:string
+  avatar?:String
+  email?:string
+  dob?:Date
+  phone?:String
+  address?: {
+    street?:String
+    suite?:String
+    city?:String
+    zipcode?:String
     geo?: {
-      lat?: string;
-      lng?: string;
-    };
+      lat?:String
+      lng?:String
+    }
   }
-  website?: string;
+  website?:String
   company?: {
-    name?: string;
-    catchPhrase?: string;
-    bs?: string;
-  };
-  createdAt?: Date;
+    name?:String
+    catchPhrase?:String
+    bs?:String
+  }
+  createdAt?:Date
 }
 
-export const User_UI = {
-  id: "user",
-  label: "User",
-  fields: [
+export const UserView = {
+  "label": "User",
+  "list": [
     {
-      id: "_id",
-      label: "ID",
-      readonly: true,
-      control: {
-        validator: { required: true }
-      }
+      "id": "_id",
+      "label": "ID"
     },
     {
-      id: "email",
-      label: "Email",
-      valueClass: "col-lg-8 col-md-8 col-sm-12 col-xs-12",
-      detailOnly: true,
-      control: {
-        validator: {
-          required: true,
-          maxLength: 100,
-          email: true
-        }
-      }
+      "id": "email",
+      "label": "Email"
     },
     {
-      id: "name",
-      label: "Name",
-      controls: [
-        {
-          id: "firstName",
-          label: "First name",
-          size: "40",
-          control: {
-            validator: {
-              required: true,
-              maxLength: 100
-            }
-          }
-        },
-        {
-          id: "lastName",
-          label: "Last name",
-          size: "40",
-          control: {
-            validator: {
-              required: true,
-              maxLength: 100
-            }
-          }
-        }
-      ]
+      "id": "username",
+      "label": "Username"
     },
     {
-      id: "birthdate",
-      label: "Birthdate",
-      type: "date",
-      control: {
-        format: v => moment(v).format("DD/MM/YYYY"),
-        parse: v => moment(v, "DD/MM/YYYY").toDate(),
-        edit_format: v => moment(v).format("YYYY-MM-DD"),
-        edit_parse: v => moment(v, "YYYY-MM-DD").toDate(),
-        validator: {
-          required: true,
-          maxLength: 20
-        }
-      }
+      "id": "dob",
+      "label": "Date of Birth"
     }
-  ]
+  ],
+  "edit": [
+    {
+      "id": "_id",
+      "label": "ID"
+    },
+    {
+      "id": "email",
+      "label": "Email"
+    },
+    {
+      "id": "name",
+      "label": "Name"
+    },
+    {
+      "id": "dob",
+      "label": "Date of Birth",
+      "type": "date"
+    }
+  ],
+  "id": "user"
 };

@@ -43,12 +43,12 @@ class App {
       console.log("HERE 3", this.models.meta);
       let ver: Meta[] = await this.models.meta.find({ id: "VERSION" }).exec() as Meta[];
       if (ver.length == 0) {
-        ver.push({ id: "VERSION", version: this.VERSION });
+        ver.push({ id: "VERSION", value: this.VERSION });
         let res = await this.models.meta.create(ver);
         console.log("RES", res);
-      } else if (ver[0].version !== this.VERSION) {
+      } else if (ver[0].value !== this.VERSION) {
         console.error("OLD VERSION", ver);
-      } else if (ver[0].version.startsWith("0.")) {
+      } else if (ver[0].value.startsWith("0.")) {
         console.error("BETA VERSION", ver);
         await this.clearDB();
         await this.initDB();

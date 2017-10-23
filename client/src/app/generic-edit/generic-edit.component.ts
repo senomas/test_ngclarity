@@ -11,6 +11,8 @@ import {
 
 import { AppService, Repository, State } from "../app.service";
 
+import * as moment from "moment";
+
 @Component({
   selector: "app-edit",
   templateUrl: "./generic-edit.component.html",
@@ -34,7 +36,7 @@ export class GenericEditComponent implements OnInit {
     private router: Router,
     private location: Location,
     private formBuilder: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit() {
     console.log("GenericEditComponent.ngOnInit");
@@ -43,11 +45,11 @@ export class GenericEditComponent implements OnInit {
     this.route.data.first().subscribe(v => {
       console.log("GenericEdit", v);
       this.ui = v.ui;
-      this.ui.fields.forEach((_v: any) => {
-        if (_v.control) {
+      this.ui.edit.forEach((_v: any) => {
+        if (typeof _v === "object") {
           let v = Object.create(_v);
           this.forms.push(v);
-          fb[v.id] = v.fcontrol = this.createFormControl(v.control);
+          fb[v.id] = v.fcontrol = this.createFormControl(v);
         } else if (_v.controls) {
           let v = Object.create(_v);
           v.controls = [];
@@ -66,29 +68,30 @@ export class GenericEditComponent implements OnInit {
           this.repo
             .get(param.id)
             .then(_v => {
+              console.log("REPO", _v);
               this.item = _v;
               let v = {};
               this.forms.forEach((f: any) => {
-                if (f.control) {
-                  if (f.control.edit_format) {
-                    v[f.id] = f.control.edit_format(_v[f.id]);
-                  } else if (f.control.format) {
+                console.log("FF", f);
+                if (typeof f === "object") {
+                  if (f.format) {
                     v[f.id] = f.control.format(_v[f.id]);
+                  } else if (f.type === "date") {
+                    v[f.id] = moment(_v[f.id]).format("YYYY-MM-DD");
                   } else {
                     v[f.id] = _v[f.id];
                   }
                 } else if (f.controls) {
                   f.controls.forEach((fc: any) => {
-                    if (fc.control.edit_format) {
-                      v[fc.id] = f.control.edit_format(_v[fc.id]);
-                    } else if (fc.control.format) {
-                      v[fc.id] = f.control.format(_v[fc.id]);
+                    if (fc.format) {
+                      v[fc.id] = f.format(_v[fc.id]);
                     } else {
                       v[fc.id] = _v[fc.id];
                     }
                   });
                 }
               });
+              console.log("VALUE", v);
               this.formGroup.setValue(v);
               this.itemLoaded = true;
             })

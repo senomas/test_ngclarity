@@ -14,8 +14,6 @@ import "rxjs/add/operator/first";
 export class GenericListComponent implements OnInit, OnDestroy {
   ui: any;
 
-  fields: any[];
-
   repo: Repository<any>;
 
   items: any[] = [];
@@ -30,7 +28,7 @@ export class GenericListComponent implements OnInit, OnDestroy {
     private appSvc: AppService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit() {
     console.log("GenericListComponent.ngOnInit");
@@ -38,26 +36,6 @@ export class GenericListComponent implements OnInit, OnDestroy {
       console.log("GenericList", v);
       this.ui = v.ui;
       this.repo = this.appSvc[`${this.ui.id}Repo`] as Repository<any>;
-      this.fields = [];
-      this.ui.fields.forEach((v: any) => {
-        if (v.control && !v.detailOnly) {
-          this.fields.push({
-            id: v.id,
-            label: v.label,
-            format: v.control.format
-          });
-        } else if (v.controls) {
-          v.controls.forEach((u: any) => {
-            if (!u.detailOnly) {
-              this.fields.push({
-                id: u.id,
-                label: u.label,
-                format: u.control.format
-              });
-            }
-          });
-        }
-      });
     });
   }
 
@@ -101,6 +79,7 @@ export class GenericListComponent implements OnInit, OnDestroy {
     this.repo
       .list(state)
       .then(v => {
+        console.log("RESULT", v);
         this.items = v.list;
         this.total = v.total;
       })

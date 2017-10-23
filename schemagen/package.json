@@ -1,0 +1,16 @@
+{
+  "name": "schemagen",
+  "version": "0.1.4",
+  "description": "model and schema generator",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "start": "node dist/index.js"
+  },
+  "author": "agus@senomas.com",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "yamljs": "^0.3.0"
+  }
+}

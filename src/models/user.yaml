@@ -1,5 +1,3 @@
-id: user
-label: User
 schema:
   name: 
     type: String
@@ -38,3 +36,25 @@ schema:
       catchPhrase: String
       bs: String
   createdAt: Date
+
+view:
+  label: User
+  list:
+    - id: _id
+      label: ID
+    - id: email
+      label: Email
+    - id: username
+      label: Username
+    - id: dob
+      label: Date of Birth
+  edit:
+    - id: _id
+      label: ID
+    - id: email
+      label: Email
+    - id: name
+      label: Name
+    - id: dob
+      label: Date of Birth
+      type: date

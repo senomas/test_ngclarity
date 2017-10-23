@@ -1,5 +1,4 @@
-
 export interface Meta {
-  id?: string;
-  version?: string;
+  id?:string
+  value?:string
 }
