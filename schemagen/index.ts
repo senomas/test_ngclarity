@@ -1,20 +1,40 @@
 import * as fs from "fs";
 import * as yaml from "yamljs";
+import * as moment from "moment";
 
 let base = `.`;
 
 try {
   let path = fs.realpathSync(`${base}/src/models`);
-  let files: string[] = fs.readdirSync(path);
+  let d: Date;
+  let files = fs.readdirSync(path);
   files.forEach((f: String) => {
     if (f.endsWith(".yaml")) {
-      console.log(`Generate schema for ${path}/${f}`)
-      let data = yaml.load(`${path}/${f}`);
-      // console.log(JSON.stringify(data, undefined, 2));
-      generateModel(f.slice(0, -5), data);
-      generateSchema(f.slice(0, -5), data);
+      let mtime = fs.lstatSync(`${path}/${f}`).mtime
+      if (!d || d.getTime() < mtime.getTime()) d = mtime;
     }
-  })
+  });
+  let dt: Date;
+  fs.readdirSync(`${base}/src/.models`).forEach((f: String) => {
+    let mtime = fs.lstatSync(`${base}/src/.models/${f}`).mtime
+    if (!dt || dt.getTime() < mtime.getTime()) dt = mtime;
+  });
+  fs.readdirSync(`${base}/client/src/app/models`).forEach((f: String) => {
+    let mtime = fs.lstatSync(`${base}/client/src/app/models/${f}`).mtime
+    if (!dt || dt.getTime() > mtime.getTime()) dt = mtime;
+  });
+  if (!dt || dt.getTime() < d.getTime()) {
+    files.forEach((f: String) => {
+      if (f.endsWith(".yaml")) {
+        console.log(`Generate schema for ${path}/${f}`)
+        let data = yaml.load(`${path}/${f}`);
+        generateModel(f.slice(0, -5), data);
+        generateSchema(f.slice(0, -5), data);
+      }
+    })
+  } else {
+    console.log(`Skip generate schema`);
+  }
 } catch (err) {
   console.error(err);
 }

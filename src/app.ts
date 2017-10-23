@@ -29,18 +29,15 @@ class App {
 
   private async init() {
     try {
-      console.log("HERE 1");
       mongoose.Promise = global.Promise;
       mongoose.set("debug", true);
 
-      console.log("HERE 2");
       this.models = new Models(
-        mongoose.createConnection("mongodb://mongo:27017/btnhack", {
-          user: "btnhack",
+        mongoose.createConnection("mongodb://mongo:27017/admin", {
+          user: "admin",
           pass: "dodol123"
         })
       );
-      console.log("HERE 3", this.models.meta);
       let ver: Meta[] = await this.models.meta.find({ id: "VERSION" }).exec() as Meta[];
       if (ver.length == 0) {
         ver.push({ id: "VERSION", value: this.VERSION });
@@ -48,6 +45,8 @@ class App {
         console.log("RES", res);
       } else if (ver[0].value !== this.VERSION) {
         console.error("OLD VERSION", ver);
+        await this.clearDB();
+        await this.initDB();
       } else if (ver[0].value.startsWith("0.")) {
         console.error("BETA VERSION", ver);
         await this.clearDB();
@@ -65,8 +64,12 @@ class App {
 
   private async clearDB() {
     console.log("clearDB");
-    await this.models.user.collection.drop();
-    await this.models.product.collection.drop();
+    try {
+      await this.models.user.collection.drop();
+      await this.models.product.collection.drop();
+    } catch (err) {
+      console.warn(err);
+    }
   }
 
   private async initDB() {

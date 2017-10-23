@@ -17,6 +17,9 @@ services:
     command: "/home/node/docker-script.sh"
   mongo:
     image: "mongo"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=dodol123
     ports:
       - "27017:27017"
     volumes: 
