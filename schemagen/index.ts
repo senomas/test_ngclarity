@@ -15,14 +15,18 @@ try {
     }
   });
   let dt: Date;
-  fs.readdirSync(`${base}/src/.models`).forEach((f: String) => {
-    let mtime = fs.lstatSync(`${base}/src/.models/${f}`).mtime
-    if (!dt || dt.getTime() < mtime.getTime()) dt = mtime;
-  });
-  fs.readdirSync(`${base}/client/src/app/models`).forEach((f: String) => {
-    let mtime = fs.lstatSync(`${base}/client/src/app/models/${f}`).mtime
-    if (!dt || dt.getTime() > mtime.getTime()) dt = mtime;
-  });
+  if (fs.existsSync(`${base}/src/.models`)) {
+    fs.readdirSync(`${base}/src/.models`).forEach((f: String) => {
+      let mtime = fs.lstatSync(`${base}/src/.models/${f}`).mtime
+      if (!dt || dt.getTime() < mtime.getTime()) dt = mtime;
+    });
+  }
+  if (fs.existsSync(`${base}/client/src/app/models`)) {
+    fs.readdirSync(`${base}/client/src/app/models`).forEach((f: String) => {
+      let mtime = fs.lstatSync(`${base}/client/src/app/models/${f}`).mtime
+      if (!dt || dt.getTime() > mtime.getTime()) dt = mtime;
+    });
+  }
   if (!dt || dt.getTime() < d.getTime()) {
     files.forEach((f: String) => {
       if (f.endsWith(".yaml")) {
@@ -66,6 +70,9 @@ function generateModel(id: string, data: any) {
     }
     if (data.view.edit) {
       data.view.edit.forEach(vk => {
+        if (vk.id === "_id") {
+          vk.readonly = true;
+        }
         if (vk.id) {
           if (vk.id && typeof schemas[vk.id] === "object") {
             vk.schema = schemas[vk.id];
@@ -73,6 +80,9 @@ function generateModel(id: string, data: any) {
         }
         if (vk.items) {
           vk.items.forEach(vki => {
+            if (vki.id === "_id") {
+              vki.readonly = true;
+            }
             if (vki.id && typeof schemas[vki.id] === "object") {
               vki.schema = schemas[vki.id];
             }
@@ -104,10 +114,8 @@ function generateModelProp(indent: string, parent: string, p: string, value: any
     switch (value.type.toLowerCase()) {
       case "string":
         return `${indent}${p}?:string\n`;
-      case "date":
-        return `${indent}${p}?:Date\n`;
       default:
-        throw `Unsupported '${value.type}'`;
+        return `${indent}${p}?:${value.type}\n`;
     }
   } else if (value.schema) {
     let result = `${indent}${p}?: {\n`;
@@ -119,7 +127,7 @@ function generateModelProp(indent: string, parent: string, p: string, value: any
     result += `${indent}}\n`;
     return result;
   }
-  throw `Invalid schema ${p} ${JSON.stringify(value, undefined, 2)}`;
+  throw `generateModelProp: Invalid schema ${p} ${JSON.stringify(value, undefined, 2)}`;
 }
 
 function generateSchema(id: string, data: any) {
@@ -146,11 +154,12 @@ function generateSchemaProp(indent: string, p: string, value: any): string {
   if (typeof value === "string") {
     return `${indent}${p}: ${value}`;
   } else if (value.type) {
-    let vp: any = { type: value.type };
+    let result = `${indent}${p}: {type: ${value.type}`;
     if (value.index) {
-      vp.index = value.index;
+      result += `, index: ${JSON.stringify(value.index)}`;
     }
-    return `${indent}${p}: ${JSON.stringify(vp)}`;
+    result += `}`;
+    return result;
   } else if (value.schema) {
     let result = `${indent}${p}: {\n`;
     let nf = false;
@@ -167,5 +176,5 @@ function generateSchemaProp(indent: string, p: string, value: any): string {
     result += `\n${indent}}`;
     return result;
   }
-  throw `Invalid schema ${p} ${JSON.stringify(value, undefined, 2)}`;
+  throw `generateSchemaProp: Invalid schema ${p} ${JSON.stringify(value, undefined, 2)}`;
 }
