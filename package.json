@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm run build && concurrently \"npm run watch\" \"npm run server\" \"npm run client-dev\"",
     "start": "concurrently \"npm run watch\" \"npm run watch-client\" \"npm run serve\"",
-    "server": "nodemon --watch dist dist/index.js",
+    "server": "nodemon --watch dist --delay 3000 dist/index.js",
     "client-dev": "cd client && ./node_modules/.bin/ng serve",
     "watch": "nodemon --watch src -e ts,css,html,json,yaml -x \"npm run build\"",
     "watch-client": "nodemon --watch client/src -e ts,css,html,json -x \"npm run build-client\"",

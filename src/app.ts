@@ -5,6 +5,8 @@ import * as logger from "morgan";
 import * as bodyParser from "body-parser";
 import * as proxy from "express-http-proxy";
 
+import { Config } from "./config";
+
 import faker = require("faker");
 import errorHandler = require("errorhandler");
 import mongoose = require("mongoose");
@@ -14,17 +16,21 @@ import { Meta } from "./.models/meta.model";
 
 import { Routers } from "./routers/routers";
 
+const config = Config();
+
 class App {
   public express: express.Application;
   private models: Models;
 
-  VERSION: string = "0.9.0.1";
+  VERSION: string = "0.9.0.1-DEV";
 
   constructor() {
     this.express = express();
-    this.init().then(() => {
-      console.log("INIT DONE");
-    }).catch(err => console.error(err));
+    this.init()
+      .then(() => {
+        console.log("INIT DONE");
+      })
+      .catch(err => console.error(err));
   }
 
   private async init() {
@@ -33,26 +39,32 @@ class App {
       mongoose.set("debug", true);
 
       this.models = new Models(
-        mongoose.createConnection("mongodb://192.168.0.25:27017/admin", {
-          user: "admin",
-          pass: "dodol123"
-        })
+        mongoose.createConnection(
+          config.db.server || "mongodb://mongo:27017/admin",
+          {
+            useMongoClient: true,
+            user: config.db.user || "admin",
+            pass: config.db.password || "dodol123"
+          }
+        )
       );
-      let ver: Meta[] = await this.models.meta.find({ id: "VERSION" }).exec() as Meta[];
-      if (ver.length == 0) {
-        ver.push({ id: "VERSION", value: this.VERSION });
-        let res = await this.models.meta.create(ver);
-        console.log("RES", res);
-      } else if (ver[0].value !== this.VERSION) {
-        console.error("OLD VERSION", ver);
-        await this.clearDB();
-        await this.initDB();
-      } else if (ver[0].value.startsWith("0.")) {
-        console.error("BETA VERSION", ver);
-        await this.clearDB();
-        await this.initDB();
+      let ver: Meta[] = (await this.models.meta
+        .find({ id: "VERSION" })
+        .exec()) as Meta[];
+      if (ver.length > 0) {
+        if (ver[0].value.endsWith("-DEV")) {
+          console.error("DEV VERSION", ver);
+          await this.models.dropCollections();
+          await this.initDB();
+        } else if (ver[0].value !== this.VERSION) {
+          console.error("NEW VERSION", ver);
+          await this.models.dropCollections();
+          await this.initDB();
+        }
       } else {
-        console.error("CURRENT VERSION", ver);
+        console.error("INIT VERSION", ver);
+        await this.models.dropCollections();
+        await this.initDB();
       }
 
       this.middleware();
@@ -62,23 +74,15 @@ class App {
     }
   }
 
-  private async clearDB() {
-    console.log("clearDB");
-    try {
-      await this.models.user.collection.drop();
-      await this.models.product.collection.drop();
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-
   private async initDB() {
     console.log("initDB");
     this.models.user.count({}, (err, count) => {
       if (count == 0) {
         let objs: any[] = [];
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 33; i++) {
           let user = faker.helpers.contextualCard();
+          let geo = user.address.geo;
+          user.address.geo = [geo.lng, geo.lat];
           console.log("USER", user);
           objs.push(user);
         }

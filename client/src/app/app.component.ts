@@ -20,7 +20,8 @@ export class AppComponent {
     { id: "address", label: "Address" },
     { id: "blog", label: "Blog" },
     { id: "info", label: "Info" },
-    { id: "about", label: "About" }
+    { id: "about", label: "About" },
+    { id: "params", label: "Params" }
   ];
 
   constructor(private router: Router, public appSvc: AppService) {}

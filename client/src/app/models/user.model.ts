@@ -10,10 +10,7 @@ export interface User {
     suite?:String
     city?:String
     zipcode?:String
-    geo?: {
-      lat?:String
-      lng?:String
-    }
+    geo?:[Number]
   }
   website?:String
   company?: {

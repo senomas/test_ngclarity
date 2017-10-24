@@ -9,6 +9,7 @@ import { User } from "./models/user.model";
 import { Product } from "./models/product.model";
 import { Address } from "./models/address.model";
 import { Blog } from "./models/blog.model";
+import { Params } from "./models/params.model";
 
 @Injectable()
 export class AppService {
@@ -23,6 +24,7 @@ export class AppService {
   public addressRepo = new Repository<Address>(this.http, "address");
 
   public blogRepo = new Repository<Blog>(this.http, "blog");
+  public paramsRepo = new Repository<Product>(this.http, "params");
 
   public warningMessage: any;
 
