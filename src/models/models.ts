@@ -9,6 +9,9 @@ import { UserModel, UserSchema } from "../.models/user";
 import { ProductModel, ProductSchema } from "../.models/product";
 import { Product } from "../.models/product.model";
 
+import { ParamsModel, ParamsSchema } from "../.models/params";
+import { Params } from "../.models/params.model";
+
 import * as mongoose from "mongoose";
 
 export class Models {
@@ -22,4 +25,34 @@ export class Models {
     "products",
     ProductSchema
   );
+
+  params: Model<ParamsModel> = this.conn.model<ParamsModel>("params", ParamsSchema);
+
+  dropCollections(): Promise<any> {
+    let drops = [];
+    for (let pk in this) {
+      if (pk === "conn") {
+        // skip
+      } else {
+        drops.push(this.dropCollection(pk));
+      }
+    }
+    console.log("DROPS", drops);
+    return Promise.all(drops);
+  }
+
+  dropCollection(id: string): Promise<void> {
+    return new Promise((resolve, err) => {
+      this[id].collection.drop().then(() => {
+        resolve();
+      }).catch(err => {
+        setTimeout(() => {
+          this[id].collection.drop().then(() => {
+            resolve();
+          }).catch(err => console.log(err));
+        }, 5000);
+      })
+    });
+  }
+
 }

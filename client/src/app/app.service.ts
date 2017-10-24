@@ -7,6 +7,7 @@ import { Comparator } from "clarity-angular";
 
 import { User } from "./models/user.model";
 import { Product } from "./models/product.model";
+import { Params } from "./models/params.model";
 
 @Injectable()
 export class AppService {
@@ -17,6 +18,8 @@ export class AppService {
   public userRepo = new Repository<User>(this.http, "user");
 
   public productRepo = new Repository<Product>(this.http, "product");
+
+  public paramsRepo = new Repository<Product>(this.http, "params");
 
   public warningMessage: any;
 

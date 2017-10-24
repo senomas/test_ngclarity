@@ -1,0 +1,40 @@
+schema:
+  name: 
+    type: String
+    index:
+      unique: true
+    length: 100
+  category:
+    type: String
+    index: true
+    length: 100
+  description:
+    type: String
+    length: 1000
+  value:
+    type: String
+    length: 1000
+  createdAt: Date
+
+view:
+  label: Parameters
+  list:
+    - id: name
+      label: Name
+    - id: category
+      label: Category
+    - id: value
+      label: value
+  edit:
+    - id: _id
+      label: ID
+    - id: name
+      label: Name
+    - id: category
+      label: Category
+    - id: description
+      label: Description
+    - id: value
+      label: Value
+
+

@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2016 VMware, Inc. All Rights Reserved.
- * This software is released under MIT license.
- * The full license information can be found in LICENSE in the root directory of this project.
- */
 import { ModuleWithProviders } from "@angular/core/src/metadata/ng_module";
 import { Routes, RouterModule } from "@angular/router";
 
@@ -15,6 +10,7 @@ import { GenericEditComponent } from "./generic-edit/generic-edit.component";
 
 import { UserView } from "./models/user.model";
 import { ProductView } from "./models/product.model";
+import { ParamsView } from "./models/params.model";
 
 export const ROUTES: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
@@ -42,6 +38,21 @@ export const ROUTES: Routes = [
     path: "product-new",
     component: GenericEditComponent,
     data: { ui: ProductView }
+  },
+  {
+    path: "params",
+    component: GenericListComponent,
+    data: { ui: ParamsView }
+  },
+  {
+    path: "params/:id",
+    component: GenericEditComponent,
+    data: { ui: ParamsView }
+  },
+  {
+    path: "params-new",
+    component: GenericEditComponent,
+    data: { ui: ParamsView }
   }
 ];
 

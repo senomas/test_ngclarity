@@ -16,10 +16,11 @@ export class AppComponent {
   items: any[] = [
     { id: "home", label: "Home" },
     { id: "user", label: "User" },
-    { id: "product", label: "Product" }
+    { id: "product", label: "Product" },
+    { id: "params", label: "Params" }
   ];
 
-  constructor(private router: Router, public appSvc: AppService) {}
+  constructor(private router: Router, public appSvc: AppService) { }
 
   ngOnInit() {
     console.log("AppComponent.ngOnInit");

@@ -1,11 +1,5 @@
 # ANGULAR CLARITY MONGODB
 
-## INSTALL ANGULAR CLI
-
-``` bash
-npm install -g @angular/cli
-```
-
 ## TOOLS
 
 [httpie](https://httpie.org/)
@@ -13,6 +7,8 @@ npm install -g @angular/cli
 ## TEST
 
 http post localhost:3000/api/user/find page:='{"from":0,"to":9,"size":10}' sort:='{"by":"email","reverse":false}' filters:='[{"property":"email","value":"doe"}]'
+
+http post localhost:3000/api/user/find page:='{"size":1}' filters:='[{ "address.geo": { "$near": [ 131.399, 32.2014 ], "$maxDistance": 0.000156961230576 }}]'
 
 ## SETUP MONGO USER
 

@@ -32,9 +32,8 @@ schema:
       city: String
       zipcode: String
       geo: 
-        schema:
-          lat: String
-          lng: String
+        type: "[Number]"
+        index: 2d
   website: String
   company:
     schema:
@@ -57,7 +56,6 @@ view:
   edit:
     - id: _id
       label: ID
-      readonly: true
     - label: Username
       items:
         - id: username
