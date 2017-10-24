@@ -12,6 +12,7 @@ import { AboutComponent } from "./about/about.component";
 import { LoginComponent } from "./login/login.component";
 import { GenericListComponent } from "./generic-list/generic-list.component";
 import { GenericEditComponent } from "./generic-edit/generic-edit.component";
+import { InfoComponent } from './info/info.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { GenericEditComponent } from "./generic-edit/generic-edit.component";
     HomeComponent,
     LoginComponent,
     GenericListComponent,
-    GenericEditComponent
+    GenericEditComponent,
+    InfoComponent
   ],
   imports: [
     BrowserAnimationsModule,

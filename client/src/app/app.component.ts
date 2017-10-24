@@ -16,7 +16,11 @@ export class AppComponent {
   items: any[] = [
     { id: "home", label: "Home" },
     { id: "user", label: "User" },
-    { id: "product", label: "Product" }
+    { id: "product", label: "Product" },
+    { id: "address", label: "Address" },
+    { id: "blog", label: "Blog" },
+    { id: "info", label: "Info" },
+    { id: "about", label: "About" }
   ];
 
   constructor(private router: Router, public appSvc: AppService) {}

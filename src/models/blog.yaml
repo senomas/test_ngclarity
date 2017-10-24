@@ -1,0 +1,36 @@
+schema:
+  id: 
+    type: String
+    index: true
+    length: 100
+  title: 
+    type: String
+    length: 200
+  content:
+    type: String
+    length: 1000
+  author:
+    type: String
+    length: 100
+  createdAt: Date
+
+view:
+  label: Blog
+  list:
+    - id: id
+      label: ID
+    - id: title
+      label: Title
+    - id: content
+      label: Content
+    - id: author
+      label: Author
+  edit:
+    - id: id
+      label: ID
+    - id: title
+      label: Title
+    - id: content
+      label: Content
+    - id: author
+      label: Author

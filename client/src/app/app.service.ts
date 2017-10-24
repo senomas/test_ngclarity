@@ -7,6 +7,8 @@ import { Comparator } from "clarity-angular";
 
 import { User } from "./models/user.model";
 import { Product } from "./models/product.model";
+import { Address } from "./models/address.model";
+import { Blog } from "./models/blog.model";
 
 @Injectable()
 export class AppService {
@@ -18,9 +20,13 @@ export class AppService {
 
   public productRepo = new Repository<Product>(this.http, "product");
 
+  public addressRepo = new Repository<Address>(this.http, "address");
+
+  public blogRepo = new Repository<Blog>(this.http, "blog");
+
   public warningMessage: any;
 
-  constructor(private http: Http) { }
+  constructor(private http: Http) {}
 
   isLogin(): boolean {
     return !!this.user;
@@ -47,7 +53,7 @@ export class AppService {
 }
 
 export class Repository<T> {
-  constructor(private http: Http, private repoId: string) { }
+  constructor(private http: Http, private repoId: string) {}
 
   get(id: string): Promise<T> {
     return new Promise((resolve, reject) => {

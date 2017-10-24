@@ -33,7 +33,7 @@ class App {
       mongoose.set("debug", true);
 
       this.models = new Models(
-        mongoose.createConnection("mongodb://mongo:27017/admin", {
+        mongoose.createConnection("mongodb://192.168.0.25:27017/admin", {
           user: "admin",
           pass: "dodol123"
         })
