@@ -1,3 +1,5 @@
+## CREATE config.local.yaml for local dev configuration
+
 db:
   server: mongodb://mongo:27017/admin
   user: admin
