@@ -46,19 +46,18 @@ class App {
       let ver: Meta[] = await this.models.meta.find({ id: "VERSION" }).exec() as Meta[];
       if (ver.length > 0) {
         if (ver[0].value.endsWith("-DEV")) {
-          console.error("BETA VERSION", ver);
+          console.error("DEV VERSION", ver);
           await this.models.dropCollections();
           await this.initDB();
         } else if (ver[0].value !== this.VERSION) {
-          console.error("OLD VERSION", ver);
+          console.error("NEW VERSION", ver);
           await this.models.dropCollections();
           await this.initDB();
         }
       } else {
-        console.error("INTITIAL VERSION", ver);
+        console.error("INIT VERSION", ver);
         await this.models.dropCollections();
         await this.initDB();
-        console.error("CURRENT VERSION", ver);
       }
 
       this.middleware();

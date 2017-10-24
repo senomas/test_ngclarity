@@ -1,4 +1,4 @@
 db:
   server: mongodb://mongo:27017/admin
-  user: adminxxxx
+  user: admin
   password: dodol123
