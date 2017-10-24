@@ -66,6 +66,7 @@ view:
             label: Content
         - id: author
             label: Author
+
 ```						
 
 2. after save will be created blog.ts and blog.model.ts in path ..\btnhackathon\src\.models
