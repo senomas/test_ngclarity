@@ -142,3 +142,37 @@ items: any[] = [
 ```		
 
 9. Open browser : http://localhost:3000, open rightsidebar, will be appear Blog menu
+
+
+## HOW TO CREATE PAGE
+
+1. change directory folder client
+2. we want to make page "contact"
+    
+    run node_modules\.bin\ng g component contact
+    
+    result:
+    create src/app/contact/contact.component.html (26 bytes)
+    create src/app/contact/contact.component.spec.ts (635 bytes)
+    create src/app/contact/contact.component.ts (274 bytes)
+    create src/app/contact/contact.component.scss (0 bytes)
+    update src/app/app.module.ts (1403 bytes)
+
+3. edit ..\btnhackathon\client\src\app\app.routing.ts
+
+    ...
+    import { ContactComponent } from "./contact/contact.component";
+    ...
+    { path: "contact", component: ContactComponent },
+    ...
+
+4. edit ..\btnhackathon\client\src\app\app.component.ts
+
+    ...
+    items: any[] = [
+        ...
+        { id: "contact", label: "Contact" },
+        ...
+    ];
+
+5. open browser check the changes

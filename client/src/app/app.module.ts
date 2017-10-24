@@ -13,6 +13,7 @@ import { LoginComponent } from "./login/login.component";
 import { GenericListComponent } from "./generic-list/generic-list.component";
 import { GenericEditComponent } from "./generic-edit/generic-edit.component";
 import { InfoComponent } from './info/info.component';
+import { ContactComponent } from './contact/contact.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { InfoComponent } from './info/info.component';
     LoginComponent,
     GenericListComponent,
     GenericEditComponent,
-    InfoComponent
+    InfoComponent,
+    ContactComponent
   ],
   imports: [
     BrowserAnimationsModule,

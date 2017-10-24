@@ -21,6 +21,7 @@ export class AppComponent {
     { id: "blog", label: "Blog" },
     { id: "info", label: "Info" },
     { id: "about", label: "About" },
+    { id: "contact", label: "Contact" },
     { id: "params", label: "Params" }
   ];
 
