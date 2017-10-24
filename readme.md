@@ -29,7 +29,7 @@ db.createUser({ user: 'btnhack', pwd: 'dodol123', roles: [ { role: "readWrite", 
 
 example : blog.yaml
 
-``` yaml
+```
 schema:
     id: 
         type: String
@@ -72,7 +72,7 @@ view:
 3. edit ..\btnhackathon\src\models\models.ts
 		add:
 
-```ts		
+```
 import { BlogModel, BlogSchema } from "../.models/blog";
 import { Blog } from "../.models/blog.model";		
 
@@ -87,7 +87,7 @@ export class Models {
 
 5. edit ..\btnhackathon\client\src\app\app.service.ts
 
-```ts	
+```
 import { Blog } from "./models/blog.model";
 
 export class AppService {
@@ -96,7 +96,7 @@ export class AppService {
 
 6. edit ..\btnhackathon\client\src\app\app.routing.ts
 
-```ts
+```
 import { BlogView } from "./models/blog.model";
 
 ...
@@ -120,19 +120,19 @@ import { BlogView } from "./models/blog.model";
 7. Now we have created for app client service, 
 test use API on command prompt:
 
-```httpie		
+```
 http post localhost:3000/api/blog/find page:=0
 ```		
 
 test on browser open url:
 
-```url		
+```
 http://localhost:3000/blog
 ```			
 
 8. To view on menu, edit file ...\btnhackathon\client\src\app\app.component.ts
 
-```ts
+```
 items: any[] = [
     ...
     { id: "blog", label: "Blog" },
