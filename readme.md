@@ -25,51 +25,51 @@ db.createUser({ user: 'btnhack', pwd: 'dodol123', roles: [ { role: "readWrite", 
 
 ## HOW TO MAKE CRUD
 
-1.	create <file_model_name>.yaml at ..\btnhackathon\src\models
+1. create <file_model_name>.yaml at ..\btnhackathon\src\models
 
 example : blog.yaml
 
 ``` yaml
 schema:
-id: 
-    type: String
-    index: true
-    length: 100
-title: 
-    type: String
-    length: 200
-content:
-    type: String
-    length: 1000
-author:
-    type: String
-    length: 100
-createdAt: Date
+    id: 
+        type: String
+        index: true
+        length: 100
+    title: 
+        type: String
+        length: 200
+    content:
+        type: String
+        length: 1000
+    author:
+        type: String
+        length: 100
+    createdAt: Date
 
 view:
-label: Blog
-list:
-    - id: id
-        label: ID
-    - id: title
-        label: Title
-    - id: content
-        label: Content
-    - id: author
-        label: Author
-edit:
-    - id: id
-        label: ID
-    - id: title
-        label: Title
-    - id: content
-        label: Content
-    - id: author
-        label: Author
+    label: Blog
+    list:
+        - id: id
+            label: ID
+        - id: title
+            label: Title
+        - id: content
+            label: Content
+        - id: author
+            label: Author
+    edit:
+        - id: id
+            label: ID
+        - id: title
+            label: Title
+        - id: content
+            label: Content
+        - id: author
+            label: Author
 ```						
 
-2.	after save will be created blog.ts and blog.model.ts in path ..\btnhackathon\src\.models
-3.	edit ..\btnhackathon\src\models\models.ts
+2. after save will be created blog.ts and blog.model.ts in path ..\btnhackathon\src\.models
+3. edit ..\btnhackathon\src\models\models.ts
 		add:
 
 ```ts		
@@ -83,9 +83,9 @@ export class Models {
 }
 ```		
 
-4.	Now we have created for model on server nodejs
+4. Now we have created for model on server nodejs
 
-5. 	edit ..\btnhackathon\client\src\app\app.service.ts
+5. edit ..\btnhackathon\client\src\app\app.service.ts
 
 ```ts	
 import { Blog } from "./models/blog.model";
@@ -94,7 +94,7 @@ export class AppService {
     public blogRepo = new Repository<Blog>(this.http, "blog");
 ```				
 
-6.	edit ..\btnhackathon\client\src\app\app.routing.ts
+6. edit ..\btnhackathon\client\src\app\app.routing.ts
 
 ```ts
 import { BlogView } from "./models/blog.model";
@@ -117,7 +117,7 @@ import { BlogView } from "./models/blog.model";
 }
 ```
 
-7. 	Now we have created for app client service, 
+7. Now we have created for app client service, 
 test use API on command prompt:
 
 ```httpie		
@@ -130,7 +130,7 @@ test on browser open url:
 http://localhost:3000/blog
 ```			
 
-8. 	To view on menu, edit file ...\btnhackathon\client\src\app\app.component.ts
+8. To view on menu, edit file ...\btnhackathon\client\src\app\app.component.ts
 
 ```ts
 items: any[] = [
@@ -140,4 +140,4 @@ items: any[] = [
 ];
 ```		
 
-9. 	Open browser : http://localhost:3000, open rightsidebar, will be appear Blog menu
+9. Open browser : http://localhost:3000, open rightsidebar, will be appear Blog menu
