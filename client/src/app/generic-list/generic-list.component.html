@@ -1,5 +1,9 @@
 <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading" [clDgRowSelection]="true" [(clrDgSelected)]="selected">
-    <clr-dg-column *ngFor="let f of ui.list" [clrDgField]="f.id">{{ f.label || f.id }}</clr-dg-column>
+    <clr-dg-column *ngFor="let f of ui.list" [clrDgField]="f.id">{{ f.label || f.id }}
+        <clr-dg-filter *ngIf="f.schema?.type === 'Date'">
+            <app-grid-filter-date></app-grid-filter-date>
+        </clr-dg-filter>
+    </clr-dg-column>
 
     <clr-dg-row *ngFor="let item of items" [clrDgItem]="item._id">
         <clr-dg-cell *ngFor="let f of ui.list">{{ getValue(f, item) }}</clr-dg-cell>

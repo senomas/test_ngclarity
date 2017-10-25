@@ -4,3 +4,6 @@ db:
   server: mongodb://mongo:27017/admin
   user: admin
   password: dodol123
+
+auth:
+  secret: thisisverysecurerandomtext

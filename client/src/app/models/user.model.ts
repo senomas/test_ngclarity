@@ -1,6 +1,8 @@
 export interface User {
   name?:string
   username?:string
+  password?:string
+  roles?:string[]
   avatar?:String
   email?:string
   dob?:Date

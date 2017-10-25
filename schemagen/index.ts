@@ -113,9 +113,9 @@ function generateModelProp(indent: string, parent: string, p: string, value: any
   } else if (value.type) {
     switch (value.type.toLowerCase()) {
       case "string":
-        return `${indent}${p}?:string\n`;
+        return `${indent}${p}?:string${value.repeat ? "[]" : ""}\n`;
       default:
-        return `${indent}${p}?:${value.type}\n`;
+        return `${indent}${p}?:${value.type}${value.repeat ? "[]" : ""}\n`;
     }
   } else if (value.schema) {
     let result = `${indent}${p}?: {\n`;
@@ -124,7 +124,7 @@ function generateModelProp(indent: string, parent: string, p: string, value: any
         result += generateModelProp(`${indent}  `, fp, pp, value.schema[pp], schemas);
       }
     }
-    result += `${indent}}\n`;
+    result += `${indent}}${value.repeat ? "[]" : ""}\n`;
     return result;
   }
   throw `generateModelProp: Invalid schema ${p} ${JSON.stringify(value, undefined, 2)}`;
@@ -154,14 +154,14 @@ function generateSchemaProp(indent: string, p: string, value: any): string {
   if (typeof value === "string") {
     return `${indent}${p}: ${value}`;
   } else if (value.type) {
-    let result = `${indent}${p}: {type: ${value.type}`;
+    let result = `${indent}${p}: ${value.repeat ? "[" : ""}{type: ${value.type}`;
     if (value.index) {
       result += `, index: ${JSON.stringify(value.index)}`;
     }
-    result += `}`;
+    result += `}${value.repeat ? "]" : ""}`;
     return result;
   } else if (value.schema) {
-    let result = `${indent}${p}: {\n`;
+    let result = `${indent}${p}: ${value.repeat ? "[" : ""}{\n`;
     let nf = false;
     for (let pp in value.schema) {
       if (value.schema.hasOwnProperty(pp)) {
@@ -173,7 +173,7 @@ function generateSchemaProp(indent: string, p: string, value: any): string {
         result += generateSchemaProp(`${indent}  `, pp, value.schema[pp]);
       }
     }
-    result += `\n${indent}}`;
+    result += `\n${indent}}${value.repeat ? "]" : ""}`;
     return result;
   }
   throw `generateSchemaProp: Invalid schema ${p} ${JSON.stringify(value, undefined, 2)}`;

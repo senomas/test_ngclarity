@@ -12,6 +12,13 @@ schema:
     required: true
     minLength: 3
     length: 200
+  password:
+    type: String
+    required: true
+    length: 200
+  roles:
+    type: String
+    repeat: true
   avatar: String
   email:
     type: String

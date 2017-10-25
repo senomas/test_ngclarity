@@ -28,7 +28,7 @@ export class AppService {
 
   public warningMessage: any;
 
-  constructor(private http: Http) {}
+  constructor(private http: Http) { }
 
   isLogin(): boolean {
     return !!this.user;
@@ -55,7 +55,7 @@ export class AppService {
 }
 
 export class Repository<T> {
-  constructor(private http: Http, private repoId: string) {}
+  constructor(private http: Http, private repoId: string) { }
 
   get(id: string): Promise<T> {
     return new Promise((resolve, reject) => {
@@ -66,10 +66,34 @@ export class Repository<T> {
     });
   }
 
-  list(state: State): Promise<List<T>> {
+  listx(state: State): Promise<List<T>> {
     return new Promise((resolve, reject) => {
       this.http
         .post(`/api/${this.repoId}/find`, state)
+        .map(v => v.json())
+        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
+    });
+  }
+
+  list(state: State): Promise<List<T>> {
+    let queryp = `from=${state.page.from}`;
+    if (state.page.size) {
+      queryp += `&size=${state.page.size}`
+    }
+    if (state.sort && state.sort.by) {
+      queryp += `&sort=${encodeURI(state.sort.by as string)}`;
+      if (state.sort.reverse) {
+        queryp += "&desc";
+      }
+    }
+    if (state.filters) {
+      state.filters.forEach((v: any) => {
+        queryp += `&f:${encodeURI(v.property)}=${encodeURI(v.value)}`;
+      });
+    }
+    return new Promise((resolve, reject) => {
+      this.http
+        .get(`/api/${this.repoId}?${queryp}`)
         .map(v => v.json())
         .subscribe(v => resolve(v), err => reject(this.parseError(err)));
     });
