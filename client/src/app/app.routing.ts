@@ -5,6 +5,7 @@ import { AboutComponent } from "./about/about.component";
 import { HomeComponent } from "./home/home.component";
 import { LoginComponent } from "./login/login.component";
 import { InfoComponent } from "./info/info.component";
+import { ContactComponent } from "./contact/contact.component";
 
 import { GenericListComponent } from "./generic-list/generic-list.component";
 import { GenericEditComponent } from "./generic-edit/generic-edit.component";
@@ -21,6 +22,7 @@ export const ROUTES: Routes = [
   { path: "about", component: AboutComponent },
   { path: "login", component: LoginComponent },
   { path: "info", component: InfoComponent },
+  { path: "contact", component: ContactComponent },
   {
     path: "user",
     component: GenericListComponent,

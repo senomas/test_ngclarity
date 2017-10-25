@@ -14,6 +14,7 @@ import { GenericListComponent } from "./generic-list/generic-list.component";
 import { GenericEditComponent } from "./generic-edit/generic-edit.component";
 import { InfoComponent } from './info/info.component';
 import { GridFilterDateComponent } from './grid-filter-date/grid-filter-date.component';
+import { ContactComponent } from './contact/contact.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { GridFilterDateComponent } from './grid-filter-date/grid-filter-date.com
     GenericListComponent,
     GenericEditComponent,
     InfoComponent,
-    GridFilterDateComponent
+    GridFilterDateComponent,
+    ContactComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -38,4 +40,4 @@ import { GridFilterDateComponent } from './grid-filter-date/grid-filter-date.com
   providers: [AppService],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
