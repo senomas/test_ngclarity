@@ -2,7 +2,7 @@
     <div class="spinner">Loading...</div>
 </div>
 <clr-main-container>
-    <clr-header>
+    <clr-header *ngIf="!needLogin">
         <div class="branding">
             <a href="#" class="nav-link">
                 <span class="clr-icon clr-clarity-logo"></span>
@@ -10,7 +10,7 @@
             </a>
         </div>
     </clr-header>
-    <div class="content-container">
+    <div class="content-container" *ngIf="!needLogin">
         <div class="content-area">
             <router-outlet></router-outlet>
         </div>
@@ -21,7 +21,28 @@
                     {{item.label}}
                 </a>
             </ng-container>
+            <a clrVerticalNavLink (click)="logout()">
+                Logout
+            </a>
         </clr-vertical-nav>
+    </div>
+    <div class="login-wrapper" *ngIf="needLogin">
+        <form class="login" (ngSubmit)="login()">
+            <label class="title">
+                <h3 class="welcome">Welcome to</h3>
+                Company Product Name
+                <h5 class="hint">Use your Company ID to sign in or create one now</h5>
+            </label>
+            <div class="login-group">
+                <div class="error active" *ngIf="loginFailed">
+                    Invalid user name or password
+                </div>
+                <input [(ngModel)]="user.name" name="user" class="username" type="text" id="login_username" placeholder="Username">
+                <input [(ngModel)]="user.password" name="password" class="password" type="password" id="login_password" placeholder="Password">
+                <button type="submit" class="btn btn-primary">NEXT</button>
+                <a href="javascript://" class="signup">Sign up for a Company ID</a>
+            </div>
+        </form>
     </div>
 </clr-main-container>
 <div class="warning modal static bump-down" *ngIf="appSvc.warningMessage">

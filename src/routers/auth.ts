@@ -56,10 +56,12 @@ export class AuthRouter {
       hmac.update(forge.util.decode64(user.password));
       let upass = forge.util.encode64(hmac.digest().getBytes());
       if (password !== upass) throw `invalid user "${password}" !== "${upass}"`;
-      let token = jwt.sign({ sub: va.username, jti: secret }, config.auth.secret, { expiresIn: '5m' }) as string;
+      let token = jwt.sign({ sub: va.username, jti: secret }, config.auth.secret, { expiresIn: '10s' }) as string;
       va.token = jwt.sign({ sub: va.username, jti: secret }, config.auth.secret, { expiresIn: '12h' }) as string;
       await this.models.auth.update({ username: va.username }, va);
-      res.json({ token: token, refreshToken: va.token });
+      user.password = null;
+      delete user.password;
+      res.json({ token: token, refreshToken: va.token, user: user });
     } catch (err) {
       console.log("auth.login err", err);
       res.status(403).json(err);
@@ -89,10 +91,12 @@ export class AuthRouter {
       let va: Auth = await this.models.auth.findOne({ username: refreshToken.sub, token: req.params.token }).exec();
       if (!va) throw "invalid token";
       let token = jwt.sign({ sub: va.username, jti: refreshToken.secret }, config.auth.secret, { expiresIn: '5m' }) as string;
-      res.json({ token: token, refreshToken: va.token });
+      let user: User = await this.models.user.findOne({ username: va.username }).exec();
+      if (!user) throw "no user";
+      res.json({ token: token, refreshToken: va.token, user: user });
     } catch (err) {
       console.log("auth.login err", err);
-      res.status(403).json(err);
+      res.status(401).json(err);
     }
   }
 }

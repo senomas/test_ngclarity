@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, Headers, RequestOptionsArgs } from "@angular/http";
 
 import { Observable } from "rxjs/Observable";
 
@@ -10,28 +10,39 @@ import { Product } from "./models/product.model";
 import { Address } from "./models/address.model";
 import { Blog } from "./models/blog.model";
 import { Params } from "./models/params.model";
+import * as forge from "node-forge";
+
+forge.options.usePureJavaScript = true;
 
 @Injectable()
 export class AppService {
-  public user: any;
+  private _tokens: any;
 
   public loading: boolean = false;
 
-  public userRepo = new Repository<User>(this.http, "user");
+  public userRepo = new Repository<User>(this.http, this, "user");
 
-  public productRepo = new Repository<Product>(this.http, "product");
+  public productRepo = new Repository<Product>(this.http, this, "product");
 
-  public addressRepo = new Repository<Address>(this.http, "address");
+  public addressRepo = new Repository<Address>(this.http, this, "address");
 
-  public blogRepo = new Repository<Blog>(this.http, "blog");
-  public paramsRepo = new Repository<Product>(this.http, "params");
+  public blogRepo = new Repository<Blog>(this.http, this, "blog");
+
+  public paramsRepo = new Repository<Product>(this.http, this, "params");
 
   public warningMessage: any;
 
-  constructor(private http: Http) { }
+  constructor(private http: Http) {
+    let ts = localStorage.getItem("tokens");
+    if (ts) {
+      try {
+        this._tokens = JSON.parse(ts);
+      } catch (err) { }
+    }
+  }
 
   isLogin(): boolean {
-    return !!this.user;
+    return !!this._tokens;
   }
 
   showWarning(msg) {
@@ -42,40 +53,132 @@ export class AppService {
     this.warningMessage = undefined;
   }
 
-  login(user): Promise<any> {
+  async login(user): Promise<any> {
     this.loading = true;
+    try {
+      let init: any = await this.authInit(user.name);
+      this._tokens = await this.authLogin(init, user.name, user.password);
+      localStorage.setItem("tokens", JSON.stringify(this._tokens));
+      this.loading = false;
+      return this._tokens;
+    } catch (err) {
+      this.loading = false;
+      throw err;
+    }
+  }
+
+  logout() {
+    this._tokens = null;
+    localStorage.removeItem("tokens");
+  }
+
+  get tokens(): any {
+    return this._tokens;
+  }
+
+  set tokens(tokens) {
+    console.log("SET TOKEN", tokens);
+    this._tokens = tokens;
+    if (tokens) {
+      localStorage.setItem("tokens", JSON.stringify(this._tokens));
+    } else {
+      localStorage.removeItem("tokens");
+    }
+  }
+
+  get user(): any {
+    if (this._tokens) return this._tokens.user;
+    return null;
+  }
+
+  authInit(username: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.user = user;
-        resolve(this.user);
-        this.loading = false;
-      }, 1000);
+      this.http.get(`/api/auth/${username}`).map(v => v.json()).subscribe(v => resolve(v), err => reject(err));
+    });
+  }
+
+  authLogin(authInit, username: string, password: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let hmac = forge.hmac.create();
+      hmac.start('sha256', username);
+      hmac.update(password);
+      let bx = hmac.digest().getBytes();
+      hmac.start('sha256', authInit.secret);
+      hmac.update(bx);
+      this.http.post(`/api/auth/${username}`, { secret: authInit.secret, password: forge.util.encode64(hmac.digest().getBytes()) }).map(v => v.json()).subscribe(v => resolve(v), err => reject(err));
+    });
+  }
+
+  authRefresh(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.get(`/api/auth/${this.tokens.refreshToken}/refresh`).map(v => v.json()).subscribe(v => {
+        this.tokens = v;
+        localStorage.setItem("tokens", JSON.stringify(this.tokens));
+        resolve(v)
+      }, err => reject(err));
     });
   }
 }
 
 export class Repository<T> {
-  constructor(private http: Http, private repoId: string) { }
+  constructor(private http: Http, private appSvc: AppService, private repoId: string) { }
 
-  get(id: string): Promise<T> {
+  async _get(url: string): Promise<any> {
+    try {
+      let res = await new Promise((resolve, reject) => {
+        this.http.get(url, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) }).map(v => v.json())
+          .subscribe(v => resolve(v), err => reject(err));
+      });
+      return res;
+    } catch (err) {
+      console.log(`\n\n_GET ERR ${url}`, err);
+      if (err.status === 403 && typeof err._body === "string") {
+        try {
+          let ebody = JSON.parse(err._body);
+          if (ebody.name === "TokenExpiredError") {
+            console.log("NEED REFRESH TOKEN");
+            let tokens = await new Promise((resolve, reject) => this.http.get(
+              `/api/auth/${this.appSvc.tokens.refreshToken}/refresh/`,
+              { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) }).map(v => v.json())
+              .subscribe(v => resolve(v), err => reject(err)));
+            console.log("NEW TOKENS", tokens);
+            this.appSvc.tokens = tokens;
+            let res = await new Promise((resolve, reject) => {
+              this.http.get(url, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) }).map(v => v.json())
+                .subscribe(v => resolve(v), err => reject(err));
+            });
+            return res;
+          }
+        } catch (err2) {
+          console.log("Refresh token", err2);
+          if (err2.status === 401) {
+            this.appSvc.tokens = null;
+            return null;
+          }
+        }
+      }
+      throw err;
+    }
+  }
+
+  _post(url: string, body: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.http
-        .get(`/api/${this.repoId}/${id}`)
-        .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
+      this.http.post(url, body, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) })
+        .subscribe(v => resolve(v), err => reject(err));
     });
   }
 
-  listx(state: State): Promise<List<T>> {
+  async refreshToken(): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.http
-        .post(`/api/${this.repoId}/find`, state)
-        .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
+      this.http.get(`/api/${this.appSvc.tokens.refreshToken}/refresh`).map(v => v.json()).subscribe(v => resolve(v), err => reject(err));
     });
   }
 
-  list(state: State): Promise<List<T>> {
+  async get(id: string): Promise<T> {
+    return await this._get(`/api/${this.repoId}/${id}`);
+  }
+
+  async list(state: State): Promise<List<T>> {
     let queryp = `from=${state.page.from}`;
     if (state.page.size) {
       queryp += `&size=${state.page.size}`
@@ -91,12 +194,9 @@ export class Repository<T> {
         queryp += `&f:${encodeURI(v.property)}=${encodeURI(v.value)}`;
       });
     }
-    return new Promise((resolve, reject) => {
-      this.http
-        .get(`/api/${this.repoId}?${queryp}`)
-        .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
-    });
+    let res = await this._get(`/api/${this.repoId}?${queryp}`);
+    console.log("LIST RESULT", res);
+    return res;
   }
 
   update(item: T): Promise<T> {
@@ -104,7 +204,7 @@ export class Repository<T> {
       this.http
         .patch(`/api/${this.repoId}/${(item as any)._id}`, item)
         .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
+        .subscribe(v => resolve(v), err => reject(err));
     });
   }
 
@@ -113,40 +213,26 @@ export class Repository<T> {
       this.http
         .post(`/api/${this.repoId}`, item)
         .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(this.parseError(err)));
+        .subscribe(v => resolve(v), err => reject(err));
     });
   }
 
   delete(val: string | T[]): Promise<T> {
-    console.log("DELETESSSS", val);
     if (val instanceof String) {
       return new Promise((resolve, reject) => {
         this.http
           .delete(`/api/${this.repoId}/${val}`)
           .map(v => v.json())
-          .subscribe(v => resolve(v), err => reject(this.parseError(err)));
+          .subscribe(v => resolve(v), err => reject(err));
       });
     } else {
       return new Promise((resolve, reject) => {
         this.http
           .post(`/api/${this.repoId}/delete`, val)
           .map(v => v.json())
-          .subscribe(v => resolve(v), err => reject(this.parseError(err)));
+          .subscribe(v => resolve(v), err => reject(err));
       });
     }
-  }
-
-  parseError(err): any {
-    try {
-      let body = JSON.parse(err._body);
-      if (body.message) {
-        return body.message;
-      }
-    } catch (perr) {
-      console.log("parseError", err, perr);
-      return err;
-    }
-    return err;
   }
 }
 

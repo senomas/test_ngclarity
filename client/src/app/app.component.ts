@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { AppService } from "./app.service";
@@ -8,10 +8,14 @@ import { AppService } from "./app.service";
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"]
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   collapsible = true;
 
   private _collapse: boolean = true;
+
+  private user: any = {};
+
+  private loginFailed: boolean = false;
 
   items: any[] = [
     { id: "home", label: "Home" },
@@ -25,10 +29,35 @@ export class AppComponent {
     { id: "params", label: "Params" }
   ];
 
-  constructor(private router: Router, public appSvc: AppService) {}
+  constructor(private router: Router, public appSvc: AppService) { }
 
   ngOnInit() {
-    console.log("AppComponent.ngOnInit");
+    console.log(`AppComponent.ngOnInit "${this.router.url}" "${JSON.stringify(this.appSvc.tokens)}"`);
+  }
+
+  ngOnDestroy() {
+    console.log("AppComponent.ngOnDestroy");
+  }
+
+  get needLogin(): boolean {
+    return !this.appSvc.tokens || !this.appSvc.user;
+  }
+
+  async login() {
+    try {
+      this.loginFailed = false;
+      await this.appSvc.login(this.user);
+      this.user.password = null;
+    } catch (err) {
+      console.log("Error login", err);
+      this.loginFailed = true;
+      this.user.password = null;
+    }
+  }
+
+  logout() {
+    this.appSvc.logout();
+    this._collapse = true;
   }
 
   get collapse(): boolean {

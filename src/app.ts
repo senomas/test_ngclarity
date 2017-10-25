@@ -24,7 +24,7 @@ class App {
   public express: express.Application;
   private models: Models;
 
-  VERSION: string = "0.9.0.5-DEV";
+  VERSION: string = "0.9.0.6-DEV";
 
   constructor() {
     this.express = express();
@@ -84,7 +84,7 @@ class App {
         let geo = user.address.geo;
         if (i === 5) {
           user.username = "seno";
-          user.roles = ["root", "admin", "operator"];
+          user.roles = ["user.list", "user.edit", "user.create", "user.delete"];
         } else if (i == 6) {
           user.username = "dodol";
           user.roles = ["operator"];
@@ -106,6 +106,14 @@ class App {
   private middleware(): void {
     this.express.disable("x-powered-by");
     this.express.use(logger("dev"));
+    this.express.use((err, req, res, next) => {
+      console.error("\n\n\nMW ERR", err, err.stack);
+      if (req.xhr) {
+        req.status(500).json({ "message": "Unknown error" });
+      } else {
+        next(err);
+      }
+    });
     this.express.use(errorHandler());
     this.express.use(compression());
     this.express.use(bodyParser.json());

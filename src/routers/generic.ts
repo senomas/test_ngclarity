@@ -2,10 +2,25 @@ import { Types } from "mongoose";
 
 import { Models } from "../models/models";
 
+import { Config } from "../config";
+
 import * as express from "express";
+import * as jwt from "jsonwebtoken";
+
+const config = Config();
 
 export class GenericRouter {
   constructor(private models: Models) { }
+
+  async getRoles(req): Promise<string[]> {
+    let auth = req.headers.authorization;
+    if (!auth) throw "need login";
+    if (!auth.startsWith("Bearer ")) throw "need login";
+    let token = jwt.verify(auth.slice(7).trim(), config.auth.secret);
+    let user = await this.models.user.findOne({ username: token.sub });
+    console.log(`USER ${JSON.stringify(user)}`)
+    return user.roles;
+  }
 
   create = async (req, res, next) => {
     try {
@@ -115,6 +130,13 @@ export class GenericRouter {
 
   find = async (req, res, next) => {
     try {
+      if (!(await this.getRoles(req)).some((v) => {
+        console.log(`CHECK ROLE "${v}"==="${req.params.model}.list"`);
+        return v === `${req.params.model}.list`
+      })) {
+        res.status(401).json({ message: "Not authorized" });
+        return
+      }
       let model = this.models[req.params.model];
       if (!model) {
         res.status(404).send(`Unknown model '${req.params.model}'`);
@@ -174,10 +196,13 @@ export class GenericRouter {
         list: results[1]
       });
     } catch (err) {
-      console.log("ERROR", err);
-      if (err.name === "MongoError" && err.code && err.message) {
-        res.status(500).json({ code: err.code, message: err.message });
+      if (err.name === "TokenExpiredError") {
+        res.status(403).json({ name: err.name, message: err.message });
+      } else if (err.name === "MongoError" && err.code && err.message) {
+        console.log("ERROR", err);
+        res.status(500).json({ name: err.name, message: err.message, code: err.code });
       } else {
+        console.log("ERROR", err);
         res.status(500).json(err);
       }
     }

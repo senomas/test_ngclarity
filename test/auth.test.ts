@@ -16,30 +16,31 @@ const delay = async (ms) => {
 
 describe("baseRoute", function () {
   this.timeout(60000);
+  let token: any;
 
   it("login", async () => {
-    try {
-      let authInit = (await http.get("/api/auth/seno")).body;
-      console.log("authInit: ", authInit);
-      let hmac = forge.hmac.create();
-      hmac.start('sha256', 'seno');
-      hmac.update('dodol123');
-      let bx = hmac.digest().getBytes();
-      hmac.start('sha256', authInit.secret);
-      hmac.update(bx);
-      let token = (await http.post("/api/auth/seno").send({ secret: authInit.secret, password: forge.util.encode64(hmac.digest().getBytes()) })).body;
-      console.log("token: ", token);
-      // await delay(5000);
-      let user = (await http.get(`/api/auth/${token.token}/user`)).body;
-      console.log("user: ", user);
-      let newToken = (await http.get(`/api/auth/${token.refreshToken}/refresh`)).body;
-      console.log("newToken: ", newToken);
-    } catch (err) {
-      if (err.response) {
-        throw new Error(`${err.response.status}: ${err.response.body}`);
-      }
-      throw err;
-    }
+    let authInit = (await http.get("/api/auth/seno")).body;
+    console.log("\n\nauthInit: ", authInit);
+
+    let hmac = forge.hmac.create();
+    hmac.start('sha256', 'seno');
+    hmac.update('dodol123');
+    let bx = hmac.digest().getBytes();
+    hmac.start('sha256', authInit.secret);
+    hmac.update(bx);
+    token = (await http.post("/api/auth/seno").send({ secret: authInit.secret, password: forge.util.encode64(hmac.digest().getBytes()) })).body;
+    console.log("\n\ntoken: ", token);
+
+    let user = (await http.get(`/api/auth/${token.token}/user`)).body;
+    console.log("\n\nuser: ", user);
+
+    // await delay(5000);
+    let newToken = (await http.get(`/api/auth/${token.refreshToken}/refresh`)).body;
+    console.log("\n\nnewToken: ", newToken);
+
+    await delay(5000);
+    let list = (await http.get(`/api/user?from=0&size=10`).set("Authorization", `Bearer ${token.token}`)).body;
+    console.log("\n\nlist: ", list);
   });
 
   it("should be json", () => {

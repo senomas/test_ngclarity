@@ -29,6 +29,7 @@
     "core-js": "^2.4.1",
     "moment": "^2.19.1",
     "mutationobserver-shim": "^0.3.2",
+    "node-forge": "^0.7.1",
     "rxjs": "^5.4.3",
     "ts-helpers": "^1.1.1",
     "web-animations-js": "^2.3.1",

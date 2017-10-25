@@ -8,10 +8,10 @@ import { AppService } from "../app.service";
   templateUrl: "./home.component.html"
 })
 export class HomeComponent {
-  constructor(private router: Router, public appSvc: AppService) {}
+  constructor(private router: Router, public appSvc: AppService) { }
 
   ngOnInit() {
-    console.log("AppComponent.ngOnInit");
+    console.log("HomeComponent.ngOnInit");
     // if (!this.appSvc.isLogin()) {
     //   this.router.navigate(["login"]);
     // }
