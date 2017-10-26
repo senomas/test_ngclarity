@@ -20,6 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   items: any[] = [
     { id: "home", label: "Home" },
     { id: "user", label: "User" },
+    { id: "role", label: "Role" },
     { id: "product", label: "Product" },
     { id: "address", label: "Address" },
     { id: "blog", label: "Blog" },

@@ -11,6 +11,7 @@ import { GenericListComponent } from "./generic-list/generic-list.component";
 import { GenericEditComponent } from "./generic-edit/generic-edit.component";
 
 import { UserView } from "./models/user.model";
+import { RoleView } from "./models/role.model";
 import { ProductView } from "./models/product.model";
 import { AddressView } from "./models/address.model";
 import { BlogView } from "./models/blog.model";
@@ -30,6 +31,13 @@ export const ROUTES: Routes = [
   },
   { path: "user/:id", component: GenericEditComponent, data: { ui: UserView } },
   { path: "user-new", component: GenericEditComponent, data: { ui: UserView } },
+  {
+    path: "role",
+    component: GenericListComponent,
+    data: { ui: RoleView }
+  },
+  { path: "role/:id", component: GenericEditComponent, data: { ui: RoleView } },
+  { path: "role-new", component: GenericEditComponent, data: { ui: RoleView } },
   {
     path: "product",
     component: GenericListComponent,

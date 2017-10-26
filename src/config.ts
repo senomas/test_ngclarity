@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as yaml from "yamljs";
 
-export const VERSION: string = "0.9.1-DEV";
+export const VERSION: string = "0.9.2-DEV";
 
 export const config = ((): any => {
   let base = fs.realpathSync(".");

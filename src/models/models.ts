@@ -102,7 +102,7 @@ export class Models {
         let geo = user.address.geo;
         if (i === 5) {
           user.username = "seno";
-          user.roles = ["user.create", "user.read", "user.update", "user.delete"];
+          user.roles = ["root", "admin", "operator", "user"];
         } else if (i == 6) {
           user.username = "dodol";
           user.roles = ["operator"];

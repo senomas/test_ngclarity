@@ -54,6 +54,8 @@ class App {
         res.status(403).json({ name: err.name, message: "token expired" });
       } else if (err.name === "NoPermissionError") {
         res.status(403).json({ name: err.name, message: err.message });
+      } else if (err.name === "TokenRefreshError") {
+        res.status(401).json({ name: err.name, message: err.message });
       } else if (err.name && err.message) {
         res.status(500).json({ name: err.name, message: err.message });
       } else {
