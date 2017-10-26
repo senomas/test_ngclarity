@@ -7,3 +7,4 @@ db:
 
 auth:
   secret: thisisverysecurerandomtext
+  tokenExpiry: 10s

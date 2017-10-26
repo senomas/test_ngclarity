@@ -66,13 +66,7 @@ export class GenericListComponent implements OnInit, OnDestroy {
         this.selected = [];
         this.refresh(this.state);
       })
-      .catch(err => {
-        if (err.statusText) {
-          this.appSvc.showWarning(err.statusText);
-        } else {
-          this.appSvc.showWarning("Unknown error");
-        }
-      });
+      .catch(err => this.handleError(err));
   }
 
   refresh(state: State) {
@@ -83,13 +77,7 @@ export class GenericListComponent implements OnInit, OnDestroy {
         this.items = v.list;
         this.total = v.total;
       })
-      .catch(err => {
-        if (err.statusText) {
-          this.appSvc.showWarning(err.statusText);
-        } else {
-          this.appSvc.showWarning("Unknown error");
-        }
-      });
+      .catch(err => this.handleError(err));
   }
 
   getValue(f: any, v: any): any {
@@ -106,5 +94,17 @@ export class GenericListComponent implements OnInit, OnDestroy {
       res = moment(res).format("DD/MM/YYYY");
     }
     return res;
+  }
+
+  handleError(err) {
+    if (err._body) {
+      let ebody = JSON.parse(err._body);
+      if (ebody.message) {
+        this.appSvc.showWarning(ebody.message);
+        return
+      }
+    }
+    console.log("APP ERR", err);
+    this.appSvc.showWarning("Unknown error");
   }
 }

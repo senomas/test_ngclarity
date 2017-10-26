@@ -7,7 +7,7 @@
     "dev": "npm run build && concurrently \"npm run express-watch\" \"npm run client\"",
     "build": "cd schemagen && npm run build && cd .. && node node_modules/schemagen/index.js && tsc -p .",
     "express-watch": "nodemon --watch src -e ts,css,html,json,yaml -x \"npm run express\"",
-    "express": "npm run build && node dist/index.js",
+    "express": "npm run build && node --inspect dist/index.js",
     "client": "cd client && ./node_modules/.bin/ng serve",
     "test": "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'"
   },

@@ -1,7 +1,9 @@
 import * as fs from "fs";
 import * as yaml from "yamljs";
 
-export const Config = (): any => {
+export const VERSION: string = "0.9.1-DEV";
+
+export const config = ((): any => {
   let base = fs.realpathSync(".");
   let fc = `${base}/config.local.yaml`;
   if (fs.existsSync(fc)) {
@@ -16,4 +18,4 @@ export const Config = (): any => {
     return yaml.load(fc);
   } else console.log(`No config ${fc}`);
   return {};
-} 
+})();

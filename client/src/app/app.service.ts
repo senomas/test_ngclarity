@@ -133,6 +133,7 @@ export class Repository<T> {
     } catch (err) {
       console.log(`\n\n_GET ERR ${url}`, err);
       if (err.status === 403 && typeof err._body === "string") {
+        let retry = false;
         try {
           let ebody = JSON.parse(err._body);
           if (ebody.name === "TokenExpiredError") {
@@ -143,11 +144,7 @@ export class Repository<T> {
               .subscribe(v => resolve(v), err => reject(err)));
             console.log("NEW TOKENS", tokens);
             this.appSvc.tokens = tokens;
-            let res = await new Promise((resolve, reject) => {
-              this.http.get(url, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) }).map(v => v.json())
-                .subscribe(v => resolve(v), err => reject(err));
-            });
-            return res;
+            retry = true;
           }
         } catch (err2) {
           console.log("Refresh token", err2);
@@ -155,6 +152,13 @@ export class Repository<T> {
             this.appSvc.tokens = null;
             return null;
           }
+        }
+        if (retry) {
+          let res = await new Promise((resolve, reject) => {
+            this.http.get(url, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) }).map(v => v.json())
+              .subscribe(v => resolve(v), err => reject(err));
+          });
+          return res;
         }
       }
       throw err;
