@@ -13,6 +13,7 @@ import { GenericListComponent } from "./generic-list/generic-list.component";
 import { GenericEditComponent } from "./generic-edit/generic-edit.component";
 import { GridFilterDateComponent } from './grid-filter-date/grid-filter-date.component';
 import { RoleEditComponent } from './role-edit/role-edit.component';
+import { GenericEditInputComponent } from './generic-edit-input/generic-edit-input.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { RoleEditComponent } from './role-edit/role-edit.component';
     GenericListComponent,
     GenericEditComponent,
     GridFilterDateComponent,
-    RoleEditComponent
+    RoleEditComponent,
+    GenericEditInputComponent
   ],
   imports: [
     BrowserAnimationsModule,

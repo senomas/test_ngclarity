@@ -51,6 +51,8 @@ export class GenericEditComponent implements OnInit {
           if (!v.type) {
             if (v.$model && v.$model.type === "Date") {
               v.type = "date";
+            } else if (v.$model && v.$model.type === "String[]") {
+              v.type = "checkboxes";
             } else {
               v.type = "text";
             }

@@ -1,0 +1,30 @@
+<label [formGroup]="formGroup" [for]="item.id" aria-haspopup="true" role="tooltip" [ngClass]="'tooltip tooltip-validation tooltip-sm' + ((!itemLoaded || item.fcontrol.valid) ? '' : ' invalid')">
+  <ng-container [ngSwitch]="item.type">
+    <ng-container *ngSwitchCase="'checkboxes'">
+      ==Checkboxes==
+    </ng-container>
+    <ng-container *ngSwitchCase="'text'">
+      <input class="form-control" [formControlName]="item.id" [name]="item.id" class=" form-control" type="text" [placeholder]="item.label"
+        [readonly]="item.readonly" [size]="item.size || 100">
+    </ng-container>
+    <ng-container *ngSwitchCase="'date'">
+      <input class="form-control" [formControlName]="item.id" [name]="item.id" class=" form-control" type="date" [placeholder]="item.label"
+        [readonly]="item.readonly" [size]="item.size || 100">
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+      {{ fi?.$model?.type }}::{{ item.type }}
+    </ng-container>
+  </ng-container>
+  <span class="tooltip-content" *ngIf="item.fcontrol.hasError('required')">
+    {{ item.label || item.id}} required!
+  </span>
+  <span class="tooltip-content" *ngIf="item.fcontrol.hasError('minlength')">
+    {{ item.label || item.id}} too short!
+  </span>
+  <span class="tooltip-content" *ngIf="item.fcontrol.hasError('maxlength')">
+    {{ item.label || item.id}} too long!
+  </span>
+  <span class="tooltip-content" *ngIf="item.fcontrol.hasError('email')">
+    {{ item.label || item.id}} invalid format!
+  </span>
+</label>

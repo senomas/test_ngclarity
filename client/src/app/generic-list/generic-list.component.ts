@@ -32,6 +32,7 @@ export class GenericListComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.appSvc.loading = true;
     console.log("GenericListComponent.ngOnInit");
     this.route.data.first().subscribe(v => {
       console.log("GenericList", v);
@@ -69,15 +70,18 @@ export class GenericListComponent implements OnInit, OnDestroy {
       .catch(err => this.handleError(err));
   }
 
-  refresh(state: State) {
-    this.state = state;
-    this.repo
-      .list(state)
-      .then(v => {
-        this.items = v.list;
-        this.total = v.total;
-      })
-      .catch(err => this.handleError(err));
+  async refresh(state: State) {
+    try {
+      this.appSvc.loading = true
+      this.state = state
+      let v = await this.repo.list(state)
+      this.items = v.list
+      this.total = v.total
+      this.appSvc.loading = false
+    } catch (err) {
+      this.handleError(err)
+      this.appSvc.loading = false
+    }
   }
 
   getValue(f: any, v: any): any {

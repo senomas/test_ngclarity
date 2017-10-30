@@ -59,8 +59,27 @@ export function generateView(m: any, schemas: any) {
       let s = schemas[ei]
       if (typeof s === "string") {
         s = { type: s }
+      } else if (Array.isArray(s)) {
+        if (typeof s[0] === "string") {
+          s = { type: `${s[0]}[]` }
+        } else {
+          s = { type: `${s[0].type}[]` }
+        }
       }
-      m.$view.edit.push({ id: ei, $model: s })
+      if (typeof ei === "string") {
+        m.$view.edit.push({ id: ei, $model: s })
+      } else {
+        let mod = {}
+        for (let k in s) {
+          mod[k] = s[k];
+        }
+        for (let k in ei) {
+          if (k !== "id") {
+            mod[k] = ei[k];
+          }
+        }
+        m.$view.edit.push({ id: ei.id, $model: mod })
+      }
     });
   }
   return `export const ${name}View = ${JSON.stringify({ id: id, list: m.$view.list, edit: m.$view.edit }, undefined, 2)}\n`;
