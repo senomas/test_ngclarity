@@ -49,7 +49,7 @@ export class GenericEditComponent implements OnInit {
         if (!_v.items) {
           let v = Object.assign({}, _v);
           if (!v.type) {
-            if (v.schema && v.schema.type === "Date") {
+            if (v.$model && v.$model.type === "Date") {
               v.type = "date";
             } else {
               v.type = "text";
@@ -63,7 +63,7 @@ export class GenericEditComponent implements OnInit {
           _v.items.forEach(_vi => {
             let vi = Object.assign({}, _vi);
             if (!vi.type) {
-              if (vi.schema && vi.schema.type === "Date") {
+              if (vi.$model && vi.$model.type === "Date") {
                 vi.type = "date";
               } else {
                 vi.type = "text";
@@ -166,21 +166,21 @@ export class GenericEditComponent implements OnInit {
 
   createFormControl(fc): FormControl {
     let validators: ValidatorFn[] = [];
-    if (fc.schema) {
-      if (fc.schema.required) {
+    if (fc.$model) {
+      if (fc.$model.required) {
         validators.push(Validators.required);
       }
-      if (fc.schema.length) {
-        validators.push(Validators.maxLength(fc.schema.length));
+      if (fc.$model.length) {
+        validators.push(Validators.maxLength(fc.$model.length));
       }
-      if (fc.schema.minLength) {
-        validators.push(Validators.minLength(fc.schema.minLength));
+      if (fc.$model.minLength) {
+        validators.push(Validators.minLength(fc.$model.minLength));
       }
-      if (fc.schema.email) {
+      if (fc.$model.email) {
         validators.push(Validators.email);
       }
-      if (fc.schema.pattern) {
-        validators.push(Validators.pattern(fc.schema.pattern));
+      if (fc.$model.pattern) {
+        validators.push(Validators.pattern(fc.$model.pattern));
       }
     }
     return new FormControl(null, validators);
@@ -195,7 +195,7 @@ export class GenericEditComponent implements OnInit {
           val = f.parse(val);
         } else if (f.type === "date") {
           val = moment(val, "YYYY-MM-DD").toDate();
-        } else if (!f.type && f.schema && f.schema.type === "Date") {
+        } else if (!f.type && f.$model && f.$model.type === "Date") {
           val = moment(val, "YYYY-MM-DD").toDate();
         }
         this.setValue(f.id, this.item, val);

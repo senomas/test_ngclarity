@@ -2,60 +2,21 @@ import { Model, Schema } from "mongoose";
 
 import { VERSION, config } from "../config";
 
-import { Meta } from "../.models/meta.model";
-import { MetaModel, MetaSchema } from "../.models/meta";
-
-import { User } from "../.models/user.model";
-import { UserModel, UserSchema } from "../.models/user";
-
-import { Role } from "../.models/role.model";
-import { RoleModel, RoleSchema } from "../.models/role";
-
-import { Auth } from "../.models/auth.model";
-import { AuthModel, AuthSchema } from "../.models/auth";
-
-import { ProductModel, ProductSchema } from "../.models/product";
-import { Product } from "../.models/product.model";
-
-import { AddressModel, AddressSchema } from "../.models/address";
-import { Address } from "../.models/address.model";
-
-import { BlogModel, BlogSchema } from "../.models/blog";
-import { Blog } from "../.models/blog.model";
-
-import { ParamsModel, ParamsSchema } from "../.models/params";
-import { Params } from "../.models/params.model";
-
+import * as fs from "fs";
+import * as yaml from "yamljs";
 import * as faker from "faker";
 import * as mongoose from "mongoose";
 import * as jwt from "jsonwebtoken";
 import * as forge from "node-forge"
 
 export class Models {
-  meta: Model<MetaModel> = this.conn.model<MetaModel>("metas", MetaSchema);
+  private _models: any = {};
 
-  user: Model<UserModel> = this.conn.model<UserModel>("users", UserSchema);
+  meta: Model<any>;
 
-  role: Model<RoleModel> = this.conn.model<RoleModel>("roles", RoleSchema);
+  auth: Model<any>;
 
-  auth: Model<AuthModel> = this.conn.model<AuthModel>("auths", AuthSchema);
-
-  product: Model<ProductModel> = this.conn.model<ProductModel>(
-    "products",
-    ProductSchema
-  );
-
-  address: Model<AddressModel> = this.conn.model<AddressModel>(
-    "address",
-    AddressSchema
-  );
-
-  blog: Model<BlogModel> = this.conn.model<BlogModel>("blog", BlogSchema);
-
-  params: Model<ParamsModel> = this.conn.model<ParamsModel>(
-    "params",
-    ParamsSchema
-  );
+  user: Model<any>;
 
   constructor(public conn: mongoose.Connection) {
     conn.on('connected', function () {
@@ -70,20 +31,38 @@ export class Models {
       console.log('Mongoose default connection disconnected');
     });
 
+    fs.readdirSync(`${__dirname}`).forEach(f => {
+      if (f.endsWith(".yaml")) {
+        try {
+          let id = f.slice(0, -5);
+          let schemaConfig = yaml.load(`${__dirname}/${f}`);
+          delete schemaConfig.$view;
+          console.log(`FILE: ${id}`, JSON.stringify(schemaConfig, undefined, 2));
+          this._models[id] = this.conn.model(id, new Schema(schemaConfig));
+        } catch (err) {
+          console.error(`ERROR LOADING SCHEMA ${f}`, err);
+          throw err;
+        }
+      }
+    });
+    this.meta = this._models.meta;
+    this.user = this._models.user;
+    this.auth = this._models.auth;
+
     setTimeout((async () => {
       console.log("INIT DATA...");
-      let ver: Meta = (await this.meta.findOne({ id: "VERSION" }).exec());
+      let ver = (await this.meta.findOne({ id: "VERSION" }).exec());
       if (ver != null) {
         if (ver.value !== VERSION) {
           console.error("NEW VERSION", ver);
-          await this.dropCollections();
           await this.initDB();
           ver.value = VERSION;
           await this.meta.update({ id: ver.id }, ver).exec();
+        } else {
+          await this.initDB();
         }
       } else {
         console.error("INIT VERSION", ver);
-        await this.dropCollections();
         await this.initDB();
         ver = { id: "VERSION", value: VERSION };
         await this.meta.create(ver);
@@ -119,6 +98,14 @@ export class Models {
       }
       await this.user.insertMany(objs);
     }
+    ["admin", "operator", "user"].forEach(async rn => {
+      let role = await this._models.role.findOne({ name: rn });
+      if (!role) {
+        role = { name: rn };
+        this._models.role.create(role);
+      }
+    });
+    console.log("initDB DONE");
   }
 
   get(req, access: string, permissions: string[] = null): Model<any> {
@@ -126,7 +113,7 @@ export class Models {
     if (!auth) throw new NoUserError("need login");
     if (!auth.startsWith("Bearer ")) throw new NoUserError("need login");
     let token = jwt.verify(auth.slice(7).trim(), config.auth.secret);
-    if (!token.role.some(v => v === "role:root")) {
+    if (!token.role.some(v => v === "root")) {
       if (!permissions) permissions = [];
       permissions.push(`${req.params.model}.${access}`);
       permissions.forEach(p => {
@@ -135,42 +122,9 @@ export class Models {
         }
       })
     }
-    let model = this[req.params.model];
+    let model = this._models[req.params.model];
     if (!model) throw new NoModelError(`Unknown model '${req.params.model}'`);
     return model;
-  }
-
-  dropCollections(): Promise<any> {
-    let drops = [];
-    for (let pk in this) {
-      if (pk === "conn") {
-        // skip
-      } else {
-        drops.push(this.dropCollection(pk));
-      }
-    }
-    console.log("DROPS", drops);
-    return Promise.all(drops);
-  }
-
-  dropCollection(id: string): Promise<void> {
-    return new Promise((resolve, err) => {
-      this[id].collection
-        .drop()
-        .then(() => {
-          resolve();
-        })
-        .catch(err => {
-          setTimeout(() => {
-            this[id].collection
-              .drop()
-              .then(() => {
-                resolve();
-              })
-              .catch(err => console.log(err));
-          }, 5000);
-        });
-    });
   }
 }
 

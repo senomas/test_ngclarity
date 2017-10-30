@@ -1,7 +1,6 @@
 import { Models, NoUserError } from "../models/models";
 
-import { User } from "../.models/user.model"
-import { Auth } from "../.models/auth.model";
+import { Auth, User } from "../models/models.type"
 
 import { config } from "../config";
 
@@ -12,7 +11,6 @@ import * as moment from "moment";
 import * as forge from "node-forge";
 
 import * as jwt from "jsonwebtoken";
-
 
 export class AuthRouter {
   constructor(private models: Models) { }
@@ -67,7 +65,12 @@ export class AuthRouter {
   })
 
   refreshToken = afn(async (req, res, next) => {
-    let refreshToken = jwt.verify(req.params.token, config.auth.secret);
+    let refreshToken;
+    try {
+      refreshToken = jwt.verify(req.params.token, config.auth.secret);
+    } catch (err) {
+      throw new TokenRefreshError("invalid refresh token");
+    }
     let va: Auth = await this.models.auth.findOne({ username: refreshToken.sub, token: req.params.token }).exec();
     if (!va) throw new TokenRefreshError("invalid token");
     let user: User = await this.models.user.findOne({ username: va.username }).exec();

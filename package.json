@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run build && concurrently \"npm run express-watch\" \"npm run client\"",
-    "build": "cd schemagen && npm run build && cd .. && node node_modules/schemagen/index.js && tsc -p .",
-    "express-watch": "nodemon --watch src -e ts,css,html,json,yaml -x \"npm run express\"",
-    "express": "npm run build && node --inspect dist/index.js",
-    "client": "cd client && ./node_modules/.bin/ng serve",
-    "test": "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'"
+    "dev": "npm run --prefix client build && npm run build && concurrently \"npm run express-watch\" \"npm run client\"",
+    "gen-models": "tsc --lib ES6 templates/*.ts --outDir dist/templates && node dist/templates/index.js",
+    "build": "npm run gen-models && tsc -p .",
+    "express-watch": "nodemon --ignore src/models/models.type.ts --watch src -e ts,css,html,json,yaml -x \"npm run express\"",
+    "express": "npm run build &&  cp src/models/*.yaml dist/models/ && node --inspect dist/index.js",
+    "client": "cd client && ./node_modules/.bin/ng serve --watch",
+    "test": "mocha --reporter spec --compilers ts:ts-node/register 'test/**/*.test.ts'",
+    "clean": "rm -rf dist"
   },
   "keywords": [],
   "author": "",
@@ -38,6 +40,7 @@
     "compression": "^1.7.1",
     "debug": "^3.1.0",
     "del": "^3.0.0",
+    "dustjs-linkedin": "^2.7.5",
     "errorhandler": "^1.5.0",
     "express": "^4.16.2",
     "express-http-proxy": "^1.0.7",
@@ -46,13 +49,14 @@
     "js-yaml": "^3.10.0",
     "jsonwebtoken": "^8.1.0",
     "moment": "^2.19.1",
-    "mongoose": "^4.12.2",
+    "mongoose": "^4.12.4",
     "morgan": "^1.9.0",
     "node-forge": "^0.7.1",
     "npm-watch": "^0.3.0",
     "run-sequence": "^2.2.0",
     "schemagen": "file:schemagen",
     "socket.io": "^2.0.3",
+    "vash": "^0.12.3",
     "ws": "^3.2.0"
   }
 }

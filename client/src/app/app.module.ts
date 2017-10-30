@@ -9,24 +9,20 @@ import { ROUTING } from "./app.routing";
 import { AppService } from "./app.service";
 import { HomeComponent } from "./home/home.component";
 import { AboutComponent } from "./about/about.component";
-import { LoginComponent } from "./login/login.component";
 import { GenericListComponent } from "./generic-list/generic-list.component";
 import { GenericEditComponent } from "./generic-edit/generic-edit.component";
-import { InfoComponent } from './info/info.component';
 import { GridFilterDateComponent } from './grid-filter-date/grid-filter-date.component';
-import { ContactComponent } from './contact/contact.component';
+import { RoleEditComponent } from './role-edit/role-edit.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AboutComponent,
     HomeComponent,
-    LoginComponent,
     GenericListComponent,
     GenericEditComponent,
-    InfoComponent,
     GridFilterDateComponent,
-    ContactComponent
+    RoleEditComponent
   ],
   imports: [
     BrowserAnimationsModule,

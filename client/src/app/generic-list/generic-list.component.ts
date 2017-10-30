@@ -90,7 +90,7 @@ export class GenericListComponent implements OnInit, OnDestroy {
       res = f.format(res);
     } else if (f.type === "date") {
       res = moment(res).format("DD/MM/YYYY");
-    } else if (!f.type && f.schema && f.schema.type === "Date") {
+    } else if (!f.type && f.$model && f.$model.type === "Date") {
       res = moment(res).format("DD/MM/YYYY");
     }
     return res;

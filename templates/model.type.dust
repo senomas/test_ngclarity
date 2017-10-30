@@ -1,0 +1,9 @@
+@model.forEach(function(m){
+<text>export interface @m.$name {</text>
+  @for(var mp in m) {
+<text>    @mp
+</text>
+  }
+<text>
+}</text>
+})

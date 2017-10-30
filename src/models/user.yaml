@@ -1,79 +1,44 @@
-schema:
-  name: 
+name:
+  type: String
+  index: true
+username:
+  type: String
+  index:
+    unique: true
+password: String
+roles:
+  -
     type: String
-    index: true
-    required: true
-    minLength: 3
-    length: 200
-  username:
-    type: String
-    index:
-      unique: true
-    required: true
-    minLength: 3
-    length: 200
-  password:
-    type: String
-    required: true
-    length: 200
-  roles:
-    type: String
-    repeat: true
-  avatar: String
-  email:
-    type: String
-    index: 
-      unique: true
-    required: true
-    email: true
-    minLength: 3
-    length: 200
-  dob:
-    type: Date
-    required: true
-  phone: String
-  address:
-    schema:
-      street: String
-      suite: String
-      city: String
-      zipcode: String
-      geo: 
-        type: "[Number]"
-        index: 2d
-  website: String
-  company:
-    schema:
-      name: String
-      catchPhrase: String
-      bs: String
-  createdAt: Date
-
-view:
-  label: User
+avatar: String
+email:
+  type: String
+  index:
+    unique: true
+dob: Date
+phone: String
+address:
+  street: String
+  suite: String
+  city: String
+  zipcode: String
+  geo:
+    type: [Number]
+    index: 2d
+website: String
+company:
+  name: String
+  catchPhrase: String
+  bs: String
+createdAt: Date
+$view:
   list:
-    - id: _id
-      label: ID
-    - id: username
-      label: Username
-    - id: address.city
-      label: City
-    - id: dob
-      label: Date of Birth
+    - username
+    - name
+    - email
+    - dob
   edit:
-    - id: _id
-      label: ID
-    - label: Username
-      items:
-        - id: username
-          label: Username
-        - id: email
-          label: Email
-    - id: name
-      label: Name
-    - id: address.city
-      label: City
-    - id: phone
-      label: Phone
-    - id: dob
-      label: Date of Birth
+    - username
+    - name
+    - email
+    - dob
+    - roles

@@ -5,11 +5,7 @@ import { Observable } from "rxjs/Observable";
 
 import { Comparator } from "clarity-angular";
 
-import { User } from "./models/user.model";
-import { Product } from "./models/product.model";
-import { Address } from "./models/address.model";
-import { Blog } from "./models/blog.model";
-import { Params } from "./models/params.model";
+import { User, Role } from "./models/models.type";
 import * as forge from "node-forge";
 
 forge.options.usePureJavaScript = true;
@@ -22,13 +18,7 @@ export class AppService {
 
   public userRepo = new Repository<User>(this.http, this, "user");
 
-  public productRepo = new Repository<Product>(this.http, this, "product");
-
-  public addressRepo = new Repository<Address>(this.http, this, "address");
-
-  public blogRepo = new Repository<Blog>(this.http, this, "blog");
-
-  public paramsRepo = new Repository<Product>(this.http, this, "params");
+  public roleRepo = new Repository<Role>(this.http, this, "role");
 
   public warningMessage: any;
 
@@ -39,6 +29,9 @@ export class AppService {
         this._tokens = JSON.parse(ts);
       } catch (err) { }
     }
+    // [].forEach(m => {
+    //   this[`${m}Repo`] = new Repository<any>(this.http, this, m);
+    // })
   }
 
   isLogin(): boolean {

@@ -1,16 +1,9 @@
-schema:
-  username:
-    type: String
-    index:
-      unique: true
-    required: true
-    minLength: 3
-    length: 200
-  token:
-    type: String
-    length: 200
-  attempts:
-    repeat: true
-    schema:
-      time: Date
-      secret: String
+username:
+  type: String
+  index:
+    unique: true
+token: String
+attempts:
+  -
+    time: Date
+    secret: String

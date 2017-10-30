@@ -1,19 +1,14 @@
-schema:
-  name: 
-    type: String
-    index: 
-      unique: true
-    required: true
-    minLength: 3
-    length: 200
-  permissions:
-    type: String
-    repeat: true
-
-view:
-  label: User
+name: 
+  type: String
+  index: 
+    unique: true
+  required: true
+  minLength: 3
+  length: 200
+permissions:
+  type: String
+  repeat: true
+$view:
   list:
-    - id: name
-      label: Name
-    - id: permissions
-      label: Permissions
+    - name
+    - permissions

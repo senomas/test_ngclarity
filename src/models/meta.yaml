@@ -1,8 +1,7 @@
-schema:
-  id: 
-    type: String
-    index: true
-    length: 100
-  value:
-    type: String
-    length: 100
+id: 
+  type: String
+  index: true
+  length: 100
+value:
+  type: String
+  length: 100

@@ -4,23 +4,23 @@
     </label>
     <div class="form-group row" *ngFor="let fi of forms">
         <div [class]="fi.labelClass || 'col-lg-2 col-md-12 col-sm-12 col-xs-12'">
-            <label [for]="fi.id">{{ fi.label }}</label>
+            <label [for]="fi.id">{{ fi.label || fi.id}}</label>
         </div>
         <div [class]="fi.valueClass || 'col-lg-4 col-md-4 col-sm-12 col-xs-12'" *ngIf="!!fi.fcontrol">
             <label [for]="fi.id" aria-haspopup="true" role="tooltip" [ngClass]="'tooltip tooltip-validation tooltip-sm' + ((!itemLoaded || fi.fcontrol.valid) ? '' : ' invalid')">
                 <input class="form-control" [formControlName]="fi.id" [name]="fi.id" class=" form-control" [type]="fi.type" [placeholder]="fi.label"
                     [readonly]="fi.readonly" [size]="fi.size || 100">
                 <span class="tooltip-content" *ngIf="fi.fcontrol.hasError('required')">
-                    {{ fi.label }} required!
+                    {{ fi.label || fi.id}} required!
                 </span>
                 <span class="tooltip-content" *ngIf="fi.fcontrol.hasError('minlength')">
-                    {{ fi.label }} too short!
+                    {{ fi.label || fi.id}} too short!
                 </span>
                 <span class="tooltip-content" *ngIf="fi.fcontrol.hasError('maxlength')">
-                    {{ fi.label }} too long!
+                    {{ fi.label || fi.id}} too long!
                 </span>
                 <span class="tooltip-content" *ngIf="fi.fcontrol.hasError('email')">
-                    {{ fi.label }} invalid format!
+                    {{ fi.label || fi.id}} invalid format!
                 </span>
             </label>
         </div>
@@ -29,16 +29,16 @@
                 <input class="form-control" [formControlName]="fii.id" [name]="fii.id" class=" form-control" [type]="fii.type" [placeholder]="fii.label"
                     [readonly]="fii.readonly" [size]="fii.size || 100">
                 <span class="tooltip-content" *ngIf="fii.fcontrol.hasError('required')">
-                    {{ fii.label }} required!
+                    {{ fii.label || fii.id}} required!
                 </span>
                 <span class="tooltip-content" *ngIf="fii.fcontrol.hasError('minlength')">
-                    {{ fii.label }} too short!
+                    {{ fii.label || fii.id}} too short!
                 </span>
                 <span class="tooltip-content" *ngIf="fii.fcontrol.hasError('maxlength')">
-                    {{ fii.label }} too long!
+                    {{ fii.label || fii.id}} too long!
                 </span>
                 <span class="tooltip-content" *ngIf="fii.fcontrol.hasError('email')">
-                    {{ fii.label }} invalid format!
+                    {{ fii.label || fii.id}} invalid format!
                 </span>
             </label>
         </div>

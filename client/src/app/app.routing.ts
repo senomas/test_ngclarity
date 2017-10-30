@@ -3,101 +3,21 @@ import { Routes, RouterModule } from "@angular/router";
 
 import { AboutComponent } from "./about/about.component";
 import { HomeComponent } from "./home/home.component";
-import { LoginComponent } from "./login/login.component";
-import { InfoComponent } from "./info/info.component";
-import { ContactComponent } from "./contact/contact.component";
 
 import { GenericListComponent } from "./generic-list/generic-list.component";
 import { GenericEditComponent } from "./generic-edit/generic-edit.component";
 
-import { UserView } from "./models/user.model";
-import { RoleView } from "./models/role.model";
-import { ProductView } from "./models/product.model";
-import { AddressView } from "./models/address.model";
-import { BlogView } from "./models/blog.model";
-import { ParamsView } from "./models/params.model";
+import { RoleEditComponent } from "./role-edit/role-edit.component"
+
+import { MODELS_ROUTES } from "./models/models.type"
 
 export const ROUTES: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
   { path: "home", component: HomeComponent },
   { path: "about", component: AboutComponent },
-  { path: "login", component: LoginComponent },
-  { path: "info", component: InfoComponent },
-  { path: "contact", component: ContactComponent },
-  {
-    path: "user",
-    component: GenericListComponent,
-    data: { ui: UserView }
-  },
-  { path: "user/:id", component: GenericEditComponent, data: { ui: UserView } },
-  { path: "user-new", component: GenericEditComponent, data: { ui: UserView } },
-  {
-    path: "role",
-    component: GenericListComponent,
-    data: { ui: RoleView }
-  },
-  { path: "role/:id", component: GenericEditComponent, data: { ui: RoleView } },
-  { path: "role-new", component: GenericEditComponent, data: { ui: RoleView } },
-  {
-    path: "product",
-    component: GenericListComponent,
-    data: { ui: ProductView }
-  },
-  {
-    path: "product/:id",
-    component: GenericEditComponent,
-    data: { ui: ProductView }
-  },
-  {
-    path: "product-new",
-    component: GenericEditComponent,
-    data: { ui: ProductView }
-  },
-  {
-    path: "address",
-    component: GenericListComponent,
-    data: { ui: AddressView }
-  },
-  {
-    path: "address/:id",
-    component: GenericEditComponent,
-    data: { ui: AddressView }
-  },
-  {
-    path: "address-new",
-    component: GenericEditComponent,
-    data: { ui: AddressView }
-  },
-  {
-    path: "blog",
-    component: GenericListComponent,
-    data: { ui: BlogView }
-  },
-  {
-    path: "blog/:id",
-    component: GenericEditComponent,
-    data: { ui: BlogView }
-  },
-  {
-    path: "blog-new",
-    component: GenericEditComponent,
-    data: { ui: BlogView }
-  },
-  {
-    path: "params",
-    component: GenericListComponent,
-    data: { ui: ParamsView }
-  },
-  {
-    path: "params/:id",
-    component: GenericEditComponent,
-    data: { ui: ParamsView }
-  },
-  {
-    path: "params-new",
-    component: GenericEditComponent,
-    data: { ui: ParamsView }
-  }
+  { path: "role/:id", component: RoleEditComponent },
+  { path: "role-new", component: RoleEditComponent },
+  ...MODELS_ROUTES
 ];
 
 export const ROUTING: ModuleWithProviders = RouterModule.forRoot(ROUTES);

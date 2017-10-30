@@ -11,7 +11,7 @@ import errorHandler = require("errorhandler");
 import mongoose = require("mongoose");
 
 import { Models } from "./models/models";
-import { Meta } from "./.models/meta.model";
+import { Meta } from "./models/models.type";
 
 import { Routers } from "./routers/routers";
 
