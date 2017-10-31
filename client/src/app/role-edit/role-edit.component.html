@@ -2,15 +2,11 @@
   <label>
     <h1>Role</h1>
   </label>
-  <div class="form-group row">
-    <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12">
-      <label for="name">Name</label>
-    </div>
-    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-      <label for="name" aria-haspopup="true" role="tooltip" [ngClass]="'tooltip tooltip-validation tooltip-sm' + ((!itemLoaded || name.valid) ? '' : ' invalid')">
-        <input class="form-control" formControlName="name" name="name" class=" form-control" type="text" placeholder="Name" size="100">
-      </label>
-    </div>
+  <div class="form-block">
+    <label for="name">Name</label>
+    <label for="name" aria-haspopup="true" role="tooltip" [ngClass]="'tooltip tooltip-validation tooltip-sm' + ((!itemLoaded || name.valid) ? '' : ' invalid')">
+      <input class="form-control" name="name" class="form-control" [ngModel]="item.name" type="text" placeholder="Name" size="100">
+    </label>
   </div>
   <table class="table">
     <thead>
@@ -23,19 +19,19 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of access">
-        <td class="tlabel">{{ item.id }}</td>
+      <tr *ngFor="let p of permissions.accesses">
+        <td class="tlabel">{{ p.id }}</td>
         <td>
-          <clr-checkbox *ngIf="!!item.read"></clr-checkbox>
+          <clr-checkbox *ngIf="!!p.permissions.read"></clr-checkbox>
         </td>
         <td>
-          <clr-checkbox *ngIf="!!item.update"></clr-checkbox>
+          <clr-checkbox *ngIf="!!p.permissions.update"></clr-checkbox>
         </td>
         <td>
-          <clr-checkbox *ngIf="!!item.create"></clr-checkbox>
+          <clr-checkbox *ngIf="!!p.permissions.create"></clr-checkbox>
         </td>
         <td>
-          <clr-checkbox *ngIf="!!item.delete"></clr-checkbox>
+          <clr-checkbox *ngIf="!!p.permissions.delete"></clr-checkbox>
         </td>
       </tr>
     </tbody>

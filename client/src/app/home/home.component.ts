@@ -1,7 +1,7 @@
-import { Component } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component } from "@angular/core"
+import { Router } from "@angular/router"
 
-import { AppService } from "../app.service";
+import { AppService } from "../app.service"
 
 @Component({
   styleUrls: ["./home.component.scss"],
@@ -11,9 +11,9 @@ export class HomeComponent {
   constructor(private router: Router, public appSvc: AppService) { }
 
   ngOnInit() {
-    console.log("HomeComponent.ngOnInit");
+    console.log("HomeComponent.ngOnInit")
     // if (!this.appSvc.isLogin()) {
-    //   this.router.navigate(["login"]);
+    //   this.router.navigate(["login"])
     // }
   }
 }

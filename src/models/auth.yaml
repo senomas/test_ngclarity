@@ -7,3 +7,5 @@ attempts:
   -
     time: Date
     secret: String
+$view:
+  permissions:

@@ -15,8 +15,9 @@ export interface Meta {
 }
 
 export interface Role {
+  code?: String
   name?: String
-  permissions?: String
+  permissions?: String[]
 }
 
 export interface User {

@@ -6,7 +6,7 @@ export function generate() {
 
   let models = loader.load()
 
-  let schemas: any = {};
+  let schemas: any = {}
   let result = `/** AUTO-GENERATE FILES */\n\n`
 
   result += `import { GenericListComponent } from "../generic-list/generic-list.component"\n`
@@ -21,40 +21,45 @@ export function generate() {
   })
 
   result += `export const MODELS_ROUTES = [`
-  let lf = true;
+  let lf = true
+  let routes = ""
   models.forEach(m => {
-    if (m.$view) {
-      if (lf) {
-        lf = false;
-        result += '\n'
-      } else result += ',\n'
-      result += generateRoutes(m, schemas)
+    let gr = generateRoutes(m, schemas)
+    if (gr.length > 0) {
+      if (routes.length > 0) {
+        routes += ',\n'
+      } else {
+        routes += '\n'
+      }
     }
+    routes += gr
   })
-  if (!lf) result += '\n';
-  result += `]`;
+  result += routes
+  if (routes.length > 0) result += '\n'
+  if (!lf) result += '\n'
+  result += `]`
 
-  loader.write(`client/src/app/models/models.type.ts`, result);
+  loader.write(`client/src/app/models/models.type.ts`, result)
   console.log("\n")
 }
 
 export function generateView(m: any, schemas: any) {
-  let id = m.$id;
+  let id = m.$id
   let name = id.charAt(0).toUpperCase() + id.slice(1)
   if (m.$view.list) {
-    let list = m.$view.list;
-    m.$view.list = [];
+    let list = m.$view.list
+    m.$view.list = []
     list.forEach(li => {
       let s = schemas[li]
       if (typeof s === "string") {
         s = { type: s }
       }
       m.$view.list.push({ id: li, $model: s })
-    });
+    })
   }
   if (m.$view.edit) {
-    let edit = m.$view.edit;
-    m.$view.edit = [];
+    let edit = m.$view.edit
+    m.$view.edit = []
     edit.forEach(ei => {
       let s = schemas[ei]
       if (typeof s === "string") {
@@ -71,35 +76,35 @@ export function generateView(m: any, schemas: any) {
       } else {
         let mod = {}
         for (let k in s) {
-          mod[k] = s[k];
+          mod[k] = s[k]
         }
         for (let k in ei) {
           if (k !== "id") {
-            mod[k] = ei[k];
+            mod[k] = ei[k]
           }
         }
         m.$view.edit.push({ id: ei.id, $model: mod })
       }
-    });
+    })
   }
-  return `export const ${name}View = ${JSON.stringify({ id: id, list: m.$view.list, edit: m.$view.edit }, undefined, 2)}\n`;
+  return `export const ${name}View = ${JSON.stringify({ id: id, list: m.$view.list, edit: m.$view.edit }, undefined, 2)}\n`
 }
 
 function generateRoutes(m: any, schemas: any): string {
-  let id = m.$id;
+  let id = m.$id
   let name = id.charAt(0).toUpperCase() + id.slice(1)
-  let result = "";
+  let result = ""
   if (m.$view) {
-    let name = id.charAt(0).toUpperCase() + id.slice(1);
+    let name = id.charAt(0).toUpperCase() + id.slice(1)
 
     if (m.$view.list) {
-      result = `  { path: "${id}", component: GenericListComponent, data: { ui: ${name}View } }`;
+      result = `  { path: "${id}", component: GenericListComponent, data: { ui: ${name}View } }`
     }
     if (m.$view.edit) {
-      if (result.length > 0) result += ",\n";
-      result += `  { path: "${id}/:id", component: GenericEditComponent, data: { ui: ${name}View } },\n`;
-      result += `  { path: "${id}-new", component: GenericEditComponent, data: { ui: ${name}View } }`;
+      if (result.length > 0) result += ",\n"
+      result += `  { path: "${id}/:id", component: GenericEditComponent, data: { ui: ${name}View } },\n`
+      result += `  { path: "${id}-new", component: GenericEditComponent, data: { ui: ${name}View } }`
     }
   }
-  return result;
+  return result
 }

@@ -1,10 +1,10 @@
-import { Component, NgZone, OnInit, OnDestroy } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { AppService, Repository, State } from "../app.service";
+import { Component, NgZone, OnInit, OnDestroy } from "@angular/core"
+import { ActivatedRoute, Router } from "@angular/router"
+import { AppService, Repository, State } from "../app.service"
 
-import { Observable } from "rxjs/Rx";
-import "rxjs/add/operator/first";
-import * as moment from "moment";
+import { Observable } from "rxjs/Rx"
+import "rxjs/add/operator/first"
+import * as moment from "moment"
 
 @Component({
   selector: "app-generic-list",
@@ -12,49 +12,52 @@ import * as moment from "moment";
   styleUrls: ["./generic-list.component.scss"]
 })
 export class GenericListComponent implements OnInit, OnDestroy {
-  ui: any;
+  ui: any
 
-  repo: Repository<any>;
+  repo: Repository<any>
 
-  items: any[] = [];
+  items: any[] = []
 
-  selected: any[] = [];
+  selected: any[] = []
 
-  state: State = {};
+  state: State = {}
 
-  total = 0;
+  total = 0
 
   constructor(
     private zone: NgZone,
     private appSvc: AppService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {
+    console.log("GenericListComponent.constructor")
+    this.appSvc.loading = true
+  }
 
   ngOnInit() {
-    console.log("GenericListComponent.ngOnInit");
+    console.log("GenericListComponent.ngOnInit")
     this.route.data.first().subscribe(v => {
-      console.log("GenericList", v);
-      this.ui = v.ui;
-      this.repo = this.appSvc[`${this.ui.id}Repo`] as Repository<any>;
-    });
+      console.log("GenericList", v)
+      this.ui = v.ui
+      this.repo = this.appSvc[`${this.ui.id}Repo`] as Repository<any>
+    })
   }
 
   ngOnDestroy() {
-    console.log("GenericListComponent.ngOnDestroy");
+    console.log("GenericListComponent.ngOnDestroy")
   }
 
   onClearSelection() {
-    this.selected = [];
+    this.selected = []
   }
 
   onAdd() {
-    this.router.navigate([`${this.ui.id}-new`]);
+    this.router.navigate([`${this.ui.id}-new`])
   }
 
   onEdit() {
     if (this.selected.length == 1) {
-      this.router.navigate([`${this.ui.id}/${this.selected[0]}`]);
+      this.router.navigate([`${this.ui.id}/${this.selected[0]}`])
     }
   }
 
@@ -62,54 +65,52 @@ export class GenericListComponent implements OnInit, OnDestroy {
     this.repo
       .delete(this.selected)
       .then(v => {
-        console.log("Delete results", v);
-        this.selected = [];
-        this.refresh(this.state);
+        console.log("Delete results", v)
+        this.selected = []
+        this.refresh(this.state)
       })
-      .catch(err => this.handleError(err));
+      .catch(err => this.handleError(err))
   }
 
   async refresh(state: State) {
-    this.zone.run(async () => {
-      try {
-        this.appSvc.loading = true
-        this.state = state
-        let v = await this.repo.list(state)
-        this.items = v.list
-        this.total = v.total
-        this.appSvc.loading = false
-      } catch (err) {
-        this.handleError(err)
-        this.appSvc.loading = false
-      }
-    })
+    try {
+      this.appSvc.loading = true
+      this.state = state
+      let v = await this.repo.list(state)
+      this.items = v.list
+      this.total = v.total
+      this.appSvc.loading = false
+    } catch (err) {
+      this.handleError(err)
+      this.appSvc.loading = false
+    }
   }
 
   getValue(f: any, v: any): any {
-    let res: any = v;
+    let res: any = v
     f.id.split(".").forEach(k => {
-      res = res[k];
-      if (!res) return null;
+      res = res[k]
+      if (!res) return null
     })
     if (f.format) {
-      res = f.format(res);
+      res = f.format(res)
     } else if (f.type === "date") {
-      res = moment(res).format("DD/MM/YYYY");
+      res = moment(res).format("DD/MM/YYYY")
     } else if (!f.type && f.$model && f.$model.type === "Date") {
-      res = moment(res).format("DD/MM/YYYY");
+      res = moment(res).format("DD/MM/YYYY")
     }
-    return res;
+    return res
   }
 
   handleError(err) {
     if (err._body) {
-      let ebody = JSON.parse(err._body);
+      let ebody = JSON.parse(err._body)
       if (ebody.message) {
-        this.appSvc.showWarning(ebody.message);
+        this.appSvc.showWarning(ebody.message)
         return
       }
     }
-    console.log("APP ERR", err);
-    this.appSvc.showWarning("Unknown error");
+    console.log("APP ERR", err)
+    this.appSvc.showWarning("Unknown error")
   }
 }

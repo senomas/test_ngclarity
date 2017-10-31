@@ -31,6 +31,10 @@ company:
   bs: String
 createdAt: Date
 $view:
+  permissions:
+    create: true
+    read: true
+    update: true
   list:
     - username
     - name

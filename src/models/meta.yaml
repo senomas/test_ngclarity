@@ -5,3 +5,5 @@ id:
 value:
   type: String
   length: 100
+$view:
+  permissions:
