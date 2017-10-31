@@ -24,6 +24,8 @@ export class GenericEditComponent implements OnInit {
   item: any;
   itemLoaded: boolean = false;
 
+  masters: any = {};
+
   ui;
 
   forms = [];
@@ -40,10 +42,9 @@ export class GenericEditComponent implements OnInit {
 
   ngOnInit() {
     console.log("GenericEditComponent.ngOnInit");
-    this.itemLoaded = false;
-    let fb = {};
     this.route.data.first().subscribe(v => {
       console.log("GenericEdit", v);
+      let fb = {};
       this.ui = v.ui;
       this.ui.edit.forEach((_v: any) => {
         if (!_v.items) {
@@ -67,6 +68,8 @@ export class GenericEditComponent implements OnInit {
             if (!vi.type) {
               if (vi.$model && vi.$model.type === "Date") {
                 vi.type = "date";
+              } else if (v.$model && v.$model.type === "String[]") {
+                v.type = "checkboxes";
               } else {
                 vi.type = "text";
               }
@@ -94,6 +97,9 @@ export class GenericEditComponent implements OnInit {
                     v[f.id] = f.control.format(_vf);
                   } else if (f.type === "date") {
                     v[f.id] = moment(_vf).format("YYYY-MM-DD");
+                  } else if (f.type === "checkboxes") {
+                    v[f.id] = _vf;
+                    this.masters[f.id] = this.getValue(`${f.id}$master`, _v);
                   } else {
                     v[f.id] = _vf;
                   }
@@ -105,6 +111,9 @@ export class GenericEditComponent implements OnInit {
                       v[fi.id] = fi.control.format(_vf);
                     } else if (fi.type === "date") {
                       v[fi.id] = moment(_vf).format("YYYY-MM-DD");
+                    } else if (f.type === "checkboxes") {
+                      v[fi.id] = _vf;
+                      this.masters[fi.id] = this.getValue(`${fi.id}$master`, _v);
                     } else {
                       v[fi.id] = _vf;
                     }

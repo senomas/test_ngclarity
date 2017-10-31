@@ -1,7 +1,12 @@
 <label [formGroup]="formGroup" [for]="item.id" aria-haspopup="true" role="tooltip" [ngClass]="'tooltip tooltip-validation tooltip-sm' + ((!itemLoaded || item.fcontrol.valid) ? '' : ' invalid')">
   <ng-container [ngSwitch]="item.type">
     <ng-container *ngSwitchCase="'checkboxes'">
-      ==Checkboxes==
+      <ng-container *ngFor="let mi of masters[item.id]">
+        <div class="checkbox">
+          <input type="checkbox" [id]="item.id+'$'+mi.id" [checked]="checked[mi.id]" (change)="checkboxToggle(mi.id)">
+          <label [for]="item.id+'$'+mi.id">{{ mi.label }}</label>
+        </div>
+      </ng-container>
     </ng-container>
     <ng-container *ngSwitchCase="'text'">
       <input class="form-control" [formControlName]="item.id" [name]="item.id" class=" form-control" type="text" [placeholder]="item.label"

@@ -6,7 +6,7 @@ import * as express from "express";
 import * as jwt from "jsonwebtoken";
 
 export class GenericRouter {
-  constructor(private models: Models) { }
+  constructor(private models: Models, private auth: any) { }
 
   create = afn(async (req, res, next) => {
     let model = this.models.get(req, "create");

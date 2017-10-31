@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 
 import { FormGroup } from "@angular/forms";
 
@@ -10,14 +10,50 @@ import { FormGroup } from "@angular/forms";
 export class GenericEditInputComponent implements OnInit {
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: FormGroup
 
   @Input()
-  public item: any;
+  public item: any
+
+  @Input()
+  public masters: any
+
+  public checked = {}
+
+  private subs: any
 
   constructor() { }
 
   ngOnInit() {
+    if (this.item.type === "checkboxes") {
+      this.subs = this.item.fcontrol.valueChanges.subscribe(v => {
+        this.checked = {}
+        if (v) {
+          v.forEach(n => {
+            this.checked[n] = true
+          })
+        }
+        console.log("VALUE CHANGE", this.checked)
+      })
+      // console.log("ITEM", this.item.fcontrol.value, "==>", this.formGroup.value);
+    }
   }
 
+  ngOnDestroy() {
+    if (this.subs) {
+      this.subs.unsubscribe()
+    }
+  }
+
+  checkboxToggle(id) {
+    console.log(`checkboxToggle("${id}")`)
+    this.checked[id] = !this.checked[id]
+    let v = [];
+    for (let k in this.checked) {
+      if (this.checked[k]) {
+        v.push(k);
+      }
+    }
+    this.item.fcontrol.setValue(v);
+  }
 }

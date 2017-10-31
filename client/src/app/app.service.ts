@@ -14,7 +14,7 @@ forge.options.usePureJavaScript = true;
 export class AppService {
   private _tokens: any;
 
-  public loading: boolean = false;
+  private _loading: boolean = false;
 
   public userRepo = new Repository<User>(this.http, this, "user");
 
@@ -46,16 +46,24 @@ export class AppService {
     this.warningMessage = undefined;
   }
 
+  get loading() {
+    return this._loading;
+  }
+
+  set loading(v: boolean) {
+    this._loading = v;
+  }
+
   async login(user): Promise<any> {
-    this.loading = true;
+    this._loading = true;
     try {
       let init: any = await this.authInit(user.name);
       this._tokens = await this.authLogin(init, user.name, user.password);
       localStorage.setItem("tokens", JSON.stringify(this._tokens));
-      this.loading = false;
+      this._loading = false;
       return this._tokens;
     } catch (err) {
-      this.loading = false;
+      this._loading = false;
       throw err;
     }
   }
@@ -158,11 +166,136 @@ export class Repository<T> {
     }
   }
 
-  _post(url: string, body: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.http.post(url, body, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) })
-        .subscribe(v => resolve(v), err => reject(err));
-    });
+  async _post(url: string, body: any): Promise<any> {
+    try {
+      let res = await new Promise((resolve, reject) => {
+        this.http.post(url, body, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) })
+          .map(v => v.json())
+          .subscribe(v => resolve(v), err => reject(err));
+      });
+      return res;
+    } catch (err) {
+      console.log(`\n\n_GET ERR ${url}`, err);
+      if (err.status === 403 && typeof err._body === "string") {
+        let retry = false;
+        try {
+          let ebody = JSON.parse(err._body);
+          if (ebody.name === "TokenExpiredError") {
+            console.log("NEED REFRESH TOKEN");
+            let tokens = await new Promise((resolve, reject) => this.http.get(
+              `/api/auth/${this.appSvc.tokens.refreshToken}/refresh/`,
+              { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) }).map(v => v.json())
+              .subscribe(v => resolve(v), err => reject(err)));
+            console.log("NEW TOKENS", tokens);
+            this.appSvc.tokens = tokens;
+            retry = true;
+          }
+        } catch (err2) {
+          console.log("Refresh token", err2);
+          if (err2.status === 401) {
+            this.appSvc.tokens = null;
+            return null;
+          }
+        }
+        if (retry) {
+          let res = await new Promise((resolve, reject) => {
+            this.http.post(url, body, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) })
+              .map(v => v.json())
+              .subscribe(v => resolve(v), err => reject(err));
+          });
+          return res;
+        }
+      }
+      throw err;
+    }
+  }
+
+  async _patch(url: string, body: any): Promise<any> {
+    try {
+      let res = await new Promise((resolve, reject) => {
+        this.http.patch(url, body, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) })
+          .map(v => v.json())
+          .subscribe(v => resolve(v), err => reject(err));
+      });
+      return res;
+    } catch (err) {
+      console.log(`\n\n_GET ERR ${url}`, err);
+      if (err.status === 403 && typeof err._body === "string") {
+        let retry = false;
+        try {
+          let ebody = JSON.parse(err._body);
+          if (ebody.name === "TokenExpiredError") {
+            console.log("NEED REFRESH TOKEN");
+            let tokens = await new Promise((resolve, reject) => this.http.get(
+              `/api/auth/${this.appSvc.tokens.refreshToken}/refresh/`,
+              { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) }).map(v => v.json())
+              .subscribe(v => resolve(v), err => reject(err)));
+            console.log("NEW TOKENS", tokens);
+            this.appSvc.tokens = tokens;
+            retry = true;
+          }
+        } catch (err2) {
+          console.log("Refresh token", err2);
+          if (err2.status === 401) {
+            this.appSvc.tokens = null;
+            return null;
+          }
+        }
+        if (retry) {
+          let res = await new Promise((resolve, reject) => {
+            this.http.patch(url, body, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) })
+              .map(v => v.json())
+              .subscribe(v => resolve(v), err => reject(err));
+          });
+          return res;
+        }
+      }
+      throw err;
+    }
+  }
+
+  async _delete(url: string): Promise<any> {
+    try {
+      let res = await new Promise((resolve, reject) => {
+        this.http.delete(url, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) })
+          .map(v => v.json())
+          .subscribe(v => resolve(v), err => reject(err));
+      });
+      return res;
+    } catch (err) {
+      console.log(`\n\n_GET ERR ${url}`, err);
+      if (err.status === 403 && typeof err._body === "string") {
+        let retry = false;
+        try {
+          let ebody = JSON.parse(err._body);
+          if (ebody.name === "TokenExpiredError") {
+            console.log("NEED REFRESH TOKEN");
+            let tokens = await new Promise((resolve, reject) => this.http.get(
+              `/api/auth/${this.appSvc.tokens.refreshToken}/refresh/`,
+              { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) }).map(v => v.json())
+              .subscribe(v => resolve(v), err => reject(err)));
+            console.log("NEW TOKENS", tokens);
+            this.appSvc.tokens = tokens;
+            retry = true;
+          }
+        } catch (err2) {
+          console.log("Refresh token", err2);
+          if (err2.status === 401) {
+            this.appSvc.tokens = null;
+            return null;
+          }
+        }
+        if (retry) {
+          let res = await new Promise((resolve, reject) => {
+            this.http.delete(url, { headers: new Headers({ Authorization: `Bearer ${this.appSvc.tokens.token}` }) })
+              .map(v => v.json())
+              .subscribe(v => resolve(v), err => reject(err));
+          });
+          return res;
+        }
+      }
+      throw err;
+    }
   }
 
   async refreshToken(): Promise<any> {
@@ -172,7 +305,13 @@ export class Repository<T> {
   }
 
   async get(id: string): Promise<T> {
-    return await this._get(`/api/${this.repoId}/${id}`);
+    let result: any = await this._get(`/api/${this.repoId}/${id}`);
+    if (this.repoId === "user") {
+      let roles = [{ id: "root", label: "ROOT" }];
+      roles.push(...((await this._get(`/api/role?count=1000`) as any).list).map(v => { return { id: v.name, label: v.name } }));
+      result.roles$master = roles;
+    }
+    return result;
   }
 
   async list(state: State): Promise<List<T>> {
@@ -196,39 +335,19 @@ export class Repository<T> {
     return res;
   }
 
-  update(item: T): Promise<T> {
-    return new Promise((resolve, reject) => {
-      this.http
-        .patch(`/api/${this.repoId}/${(item as any)._id}`, item)
-        .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(err));
-    });
+  async update(item: T): Promise<T> {
+    return await this._patch(`/api/${this.repoId}/${(item as any)._id}`, item);
   }
 
-  save(item: T): Promise<T> {
-    return new Promise((resolve, reject) => {
-      this.http
-        .post(`/api/${this.repoId}`, item)
-        .map(v => v.json())
-        .subscribe(v => resolve(v), err => reject(err));
-    });
+  async save(item: T): Promise<T> {
+    return await this._post(`/api/${this.repoId}`, item);
   }
 
-  delete(val: string | T[]): Promise<T> {
+  async delete(val: string | T[]): Promise<T> {
     if (val instanceof String) {
-      return new Promise((resolve, reject) => {
-        this.http
-          .delete(`/api/${this.repoId}/${val}`)
-          .map(v => v.json())
-          .subscribe(v => resolve(v), err => reject(err));
-      });
+      return await this._delete(`/api/${this.repoId}/${val}`);
     } else {
-      return new Promise((resolve, reject) => {
-        this.http
-          .post(`/api/${this.repoId}/delete`, val)
-          .map(v => v.json())
-          .subscribe(v => resolve(v), err => reject(err));
-      });
+      return await this._post(`/api/${this.repoId}/delete`, val);
     }
   }
 }

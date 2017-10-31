@@ -2,15 +2,15 @@
     <label>
         <h1>{{ ui.label || ui.id }}</h1>
     </label>
-    <div class="form-group row" *ngFor="let fi of forms">
-        <div [class]="fi.labelClass || 'col-lg-2 col-md-12 col-sm-12 col-xs-12'">
+    <div class="form-block">
+        <div class="form-group" *ngFor="let fi of forms">
             <label [for]="fi.id">{{ fi.label || fi.id}}</label>
-        </div>
-        <div [class]="fi.valueClass || 'col-lg-4 col-md-4 col-sm-12 col-xs-12'" *ngIf="!!fi.fcontrol">
-            <app-generic-edit-input [formGroup]="formGroup" [item]="fi"></app-generic-edit-input>
-        </div>
-        <div [class]="fii.valueClass || 'col-lg-4 col-md-4 col-sm-12 col-xs-12'" *ngFor="let fii of fi.controls">
-            <app-generic-edit-input [formGroup]="formGroup" [item]="fii"></app-generic-edit-input>
+            <ng-container *ngIf="!!fi.fcontrol">
+                <app-generic-edit-input [formGroup]="formGroup" [item]="fi" [masters]="masters"></app-generic-edit-input>
+            </ng-container>
+            <ng-container *ngFor="let fii of fi.controls">
+                <app-generic-edit-input [formGroup]="formGroup" [item]="fii" [masters]="masters"></app-generic-edit-input>
+            </ng-container>
         </div>
     </div>
     <div class="action-bar">

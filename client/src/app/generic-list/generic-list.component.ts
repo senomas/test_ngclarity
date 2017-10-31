@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, NgZone, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-
 import { AppService, Repository, State } from "../app.service";
 
 import { Observable } from "rxjs/Rx";
@@ -26,13 +25,13 @@ export class GenericListComponent implements OnInit, OnDestroy {
   total = 0;
 
   constructor(
+    private zone: NgZone,
     private appSvc: AppService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    this.appSvc.loading = true;
     console.log("GenericListComponent.ngOnInit");
     this.route.data.first().subscribe(v => {
       console.log("GenericList", v);
@@ -71,17 +70,19 @@ export class GenericListComponent implements OnInit, OnDestroy {
   }
 
   async refresh(state: State) {
-    try {
-      this.appSvc.loading = true
-      this.state = state
-      let v = await this.repo.list(state)
-      this.items = v.list
-      this.total = v.total
-      this.appSvc.loading = false
-    } catch (err) {
-      this.handleError(err)
-      this.appSvc.loading = false
-    }
+    this.zone.run(async () => {
+      try {
+        this.appSvc.loading = true
+        this.state = state
+        let v = await this.repo.list(state)
+        this.items = v.list
+        this.total = v.total
+        this.appSvc.loading = false
+      } catch (err) {
+        this.handleError(err)
+        this.appSvc.loading = false
+      }
+    })
   }
 
   getValue(f: any, v: any): any {
